@@ -1,0 +1,101 @@
+---
+import { Image } from "astro:assets";
+import headshot from "~/assets/headshot.jpg";
+import AvailabilityBadge from "./AvailabilityBadge.astro";
+import SideNav from "~/components/nav/SideNav.astro";
+import IconLink from "~/components/ui/IconLink.astro";
+import LinkedInIcon from "~/components/ui/icons/LinkedInIcon.astro";
+import MailIcon from "~/components/ui/icons/MailIcon.astro";
+import DocumentIcon from "~/components/ui/icons/DocumentIcon.astro";
+
+const navItems = [
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Projects" },
+  { id: "contact", label: "Contact" },
+];
+---
+
+<header
+  class="flex flex-col gap-10 lg:sticky lg:top-0 lg:flex h-auto lg:h-dvh lg:max-h-dvh lg:py-24"
+>
+  <div class="flex flex-col gap-6">
+    {/* DRAFT — rewrite in your voice */}
+    <AvailabilityBadge />
+
+    <div class="flex items-center gap-4">
+      <Image
+        src={headshot}
+        alt="Portrait of Andrés Pino"
+        width={128}
+        height={128}
+        densities={[1, 2]}
+        formats={["avif", "webp"]}
+        loading="eager"
+        class="h-16 w-16 rounded-full border border-teal/20 object-cover shadow-[0_0_0_4px_rgb(6_26_44/_0.6)]"
+      />
+      <div>
+        <h1 class="text-3xl font-semibold text-near-white sm:text-4xl">
+          Andrés Pino
+        </h1>
+        {/* DRAFT */}
+        <p class="mt-1 text-base text-light-slate">
+          Senior Electrical &amp; Systems Engineering Leader
+        </p>
+      </div>
+    </div>
+
+    {/* DRAFT — 2-sentence positioning */}
+    <p class="max-w-md text-slate">
+      Two decades architecting and delivering complex hardware systems for
+      defense and maritime customers — power electronics, directed-energy
+      weapons, sonar, and undersea autonomy. I help technical teams move from
+      concept to integrated, deployable systems on schedule.
+    </p>
+
+    <p class="font-mono text-xs uppercase tracking-widest text-slate/80">
+      Active TS Clearance · San Diego, CA
+    </p>
+  </div>
+
+  <SideNav items={navItems} />
+
+  {/* Mobile-only inline section jumplist */}
+  <nav aria-label="Page sections" class="lg:hidden">
+    <ul class="flex flex-wrap gap-2">
+      {
+        navItems.map((item) => (
+          <li>
+            <a
+              href={`#${item.id}`}
+              class="inline-flex items-center rounded-full border border-slate/20 px-3 py-1 font-mono text-xs uppercase tracking-widest text-slate hover:border-teal/40 hover:text-teal"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <ul class="mt-auto flex items-center gap-2" aria-label="Social links">
+    <li>
+      <IconLink
+        href="https://www.linkedin.com/in/andresmpino/"
+        label="LinkedIn profile"
+      >
+        <LinkedInIcon />
+      </IconLink>
+    </li>
+    <li>
+      <IconLink href="mailto:andres.m.pino@gmail.com" label="Email Andrés">
+        <MailIcon />
+      </IconLink>
+    </li>
+    <li>
+      <IconLink href="/andres-pino-resume.pdf" label="Download résumé (PDF)">
+        <DocumentIcon />
+      </IconLink>
+    </li>
+  </ul>
+</header>

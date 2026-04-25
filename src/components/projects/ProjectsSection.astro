@@ -1,0 +1,50 @@
+---
+import { getCollection, render } from "astro:content";
+import SectionHeading from "~/components/ui/SectionHeading.astro";
+import ProjectCard from "./ProjectCard.astro";
+
+const all = await getCollection("projects");
+const featured = all
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+
+// Render the markdown body of each project to plain text via Astro's content rendering.
+// Use the raw body (markdown source) since the entries are short prose paragraphs.
+const cards = featured.map((p) => ({
+  ...p.data,
+  body: p.body?.trim() ?? "",
+}));
+---
+
+<section
+  id="projects"
+  aria-labelledby="projects-heading"
+  class="scroll-mt-24"
+>
+  <SectionHeading title="Selected Projects" />
+
+  <div class="-mx-4 space-y-2 sm:-mx-6">
+    {
+      cards.map((c) => (
+        <ProjectCard
+          title={c.title}
+          organization={c.organization}
+          year={c.year}
+          externalUrl={c.externalUrl}
+          body={c.body}
+          tags={c.tags}
+        />
+      ))
+    }
+  </div>
+
+  <div class="mt-8 px-4 sm:px-6">
+    <a
+      href="/projects"
+      class="group inline-flex items-center gap-2 font-mono text-sm text-teal hover:underline"
+    >
+      View all projects
+      <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+    </a>
+  </div>
+</section>

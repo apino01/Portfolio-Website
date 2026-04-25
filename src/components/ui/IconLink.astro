@@ -1,0 +1,19 @@
+---
+interface Props {
+  href: string;
+  label: string;
+  external?: boolean;
+}
+const { href, label, external = false } = Astro.props;
+const isExternal = external || /^https?:/.test(href) || href.endsWith(".pdf");
+---
+
+<a
+  href={href}
+  aria-label={label}
+  title={label}
+  {...isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {}}
+  class="group inline-flex h-10 w-10 items-center justify-center rounded text-slate transition-colors hover:text-teal focus-visible:text-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-abyss"
+>
+  <slot />
+</a>

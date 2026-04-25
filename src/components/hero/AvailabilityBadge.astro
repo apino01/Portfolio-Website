@@ -1,0 +1,19 @@
+---
+interface Props {
+  label?: string;
+}
+const { label = "Open to advisory & consulting work" } = Astro.props;
+---
+
+<span
+  class="inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal-dim px-3 py-1 font-mono text-xs tracking-wide text-teal"
+  role="status"
+>
+  <span class="relative flex h-2 w-2">
+    <span
+      class="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal opacity-60 motion-reduce:hidden"
+    ></span>
+    <span class="relative inline-flex h-2 w-2 rounded-full bg-teal"></span>
+  </span>
+  {label}
+</span>

@@ -1,0 +1,52 @@
+---
+import { getCollection } from "astro:content";
+import SectionHeading from "~/components/ui/SectionHeading.astro";
+import RoleCard from "./RoleCard.astro";
+
+const roles = (await getCollection("experience")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+function formatYear(d: string): string {
+  if (d.toLowerCase() === "present") return "Present";
+  // input "2025-08" → "2025"
+  return d.split("-")[0];
+}
+---
+
+<section
+  id="experience"
+  aria-labelledby="experience-heading"
+  class="scroll-mt-24"
+>
+  <SectionHeading title="Experience" />
+
+  <div class="-mx-4 sm:-mx-6">
+    {
+      roles.map((r) => (
+        <RoleCard
+          role={r.data.role}
+          organization={r.data.organization}
+          location={r.data.location}
+          dateRange={`${formatYear(r.data.startDate)} — ${formatYear(r.data.endDate)}`}
+          summary={r.data.summary}
+          bullets={r.data.bullets}
+        />
+      ))
+    }
+  </div>
+
+  <div class="mt-8 px-4 sm:px-6">
+    <a
+      href="/andres-pino-resume.pdf"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="group inline-flex items-center gap-2 font-mono text-sm text-teal hover:underline"
+    >
+      View full résumé
+      <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">
+        ↗
+      </span>
+    </a>
+  </div>
+</section>

@@ -1,0 +1,65 @@
+---
+import SectionHeading from "~/components/ui/SectionHeading.astro";
+import Tag from "~/components/ui/Tag.astro";
+
+/* DRAFT — every paragraph below is written by Claude. Rewrite in your voice. */
+/* 12 chips — six technical domains, six leadership/program signals.
+   Ordered to balance the wrap: technical block first, leadership block second. */
+const competencies = [
+  "Power Electronics",
+  "Directed Energy / HEL",
+  "Electro-Optical Systems",
+  "SONAR Systems",
+  "AUV / UUV Platforms",
+  "Hardware Integration & Test",
+  "System Architecture",
+  "Technical Leadership",
+  "Team Management",
+  "Program Execution",
+  "Design Reviews",
+  "DoD Customer Engagement",
+];
+---
+
+<section id="about" aria-labelledby="about-heading" class="scroll-mt-24">
+  <SectionHeading title="About" />
+
+  <div class="space-y-5 text-slate">
+    {/* DRAFT */}
+    <p>
+      I'm a senior electrical and systems engineering leader with two decades
+      of experience taking complex hardware from a sketch on a whiteboard to a
+      delivered, integrated system. Today I lead the power electronics and
+      system design group at General Atomics Electromagnetic Systems in San
+      Diego, where my team supports high-energy laser and electro-optical
+      programs for the U.S. Department of Defense.
+    </p>
+
+    {/* DRAFT */}
+    <p>
+      My career has moved between three closely related worlds: directed
+      energy with the Layered Laser Defense prototype at Lockheed Martin and
+      the Reaper-mounted high-energy laser at GA-EMS, undersea autonomy with
+      the Marlin AUV, Terradepth's long-endurance vehicles, and the RAP-VLA
+      passive surveillance system, and Navy sonar with MK54, LWWAA, HELRAS,
+      TB-29, and TB-34A as Chief Engineer at L3Harris. I hold a Master's in
+      Electrical Engineering from Johns Hopkins focused on power electronics
+      and analog circuit design, and an active Top Secret clearance.
+    </p>
+
+    {/* DRAFT */}
+    <p>
+      Outside of my day job I'm open to advisory work for small businesses,
+      startups, and prime contractors who need a senior pair of eyes — design
+      reviews, architecture critiques, technical due diligence, or hands-on
+      help framing a difficult hardware problem. If you're building anything
+      that involves power conversion, batteries in punishing environments,
+      directed-energy subsystems, or unmanned maritime platforms, I'd like to
+      hear about it.
+    </p>
+  </div>
+
+  <ul class="mt-8 flex flex-wrap gap-2" aria-label="Core competencies">
+    {competencies.map((c) => <li><Tag label={c} /></li>)}
+  </ul>
+</section>

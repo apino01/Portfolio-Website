@@ -1,0 +1,70 @@
+---
+import Tag from "~/components/ui/Tag.astro";
+
+interface Props {
+  title: string;
+  organization: string;
+  year: string;
+  externalUrl?: string;
+  body: string;
+  tags: string[];
+}
+
+const { title, organization, year, externalUrl, body, tags } = Astro.props;
+
+const hostname = externalUrl ? new URL(externalUrl).hostname.replace(/^www\./, "") : null;
+---
+
+<article
+  class="group relative grid gap-4 rounded-md border border-transparent p-4 transition-colors hover:border-teal/20 hover:bg-deep-navy/40 sm:p-6"
+>
+  <div class="flex items-baseline justify-between gap-4">
+    <p class="font-mono text-xs uppercase tracking-widest text-slate/80">
+      {year}
+    </p>
+    {
+      hostname && (
+        <p class="font-mono text-xs text-slate/70">{hostname}</p>
+      )
+    }
+  </div>
+
+  <div>
+    <h3
+      class="text-base font-semibold text-near-white transition-colors group-hover:text-teal"
+    >
+      {
+        externalUrl ? (
+          <a
+            href={externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="before:absolute before:inset-0 before:content-['']"
+          >
+            {title}
+            <span aria-hidden="true" class="ml-1 inline-block transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
+          </a>
+        ) : (
+          <>{title}</>
+        )
+      }
+    </h3>
+    <p class="mt-1 font-mono text-xs uppercase tracking-widest text-slate/70">
+      {organization}
+    </p>
+  </div>
+
+  <p class="text-sm text-slate">{body}</p>
+
+  {
+    tags.length > 0 && (
+      <ul class="flex flex-wrap gap-2" aria-label="Project tags">
+        {tags.map((t) => (
+          <li>
+            <Tag label={t} />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</article>

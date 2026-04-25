@@ -1,0 +1,73 @@
+---
+interface NavItem {
+  id: string;
+  label: string;
+}
+interface Props {
+  items: NavItem[];
+}
+const { items } = Astro.props;
+---
+
+<nav aria-label="Page sections" class="hidden lg:block">
+  <ul class="space-y-3">
+    {
+      items.map((item) => (
+        <li>
+          <a
+            href={`#${item.id}`}
+            data-section-link={item.id}
+            class="group flex items-center gap-4 py-1 font-mono text-xs uppercase tracking-widest text-slate transition-colors hover:text-near-white focus-visible:text-near-white"
+          >
+            <span
+              data-section-rule
+              class="h-px w-8 bg-slate/40 transition-all group-hover:w-16 group-hover:bg-near-white"
+            />
+            <span data-section-label>{item.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  const links = document.querySelectorAll<HTMLAnchorElement>(
+    "[data-section-link]",
+  );
+  const ids = Array.from(links).map((l) => l.dataset.sectionLink!);
+  const sections = ids
+    .map((id) => document.getElementById(id))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if (sections.length > 0 && "IntersectionObserver" in window) {
+    const setActive = (activeId: string | null) => {
+      links.forEach((link) => {
+        const isActive = link.dataset.sectionLink === activeId;
+        const rule = link.querySelector<HTMLElement>("[data-section-rule]");
+        const label = link.querySelector<HTMLElement>("[data-section-label]");
+        if (isActive) {
+          link.setAttribute("aria-current", "true");
+          rule?.classList.add("!w-16", "!bg-near-white");
+          label?.classList.add("text-near-white");
+        } else {
+          link.removeAttribute("aria-current");
+          rule?.classList.remove("!w-16", "!bg-near-white");
+          label?.classList.remove("text-near-white");
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 1] },
+    );
+
+    sections.forEach((s) => observer.observe(s));
+  }
+</script>

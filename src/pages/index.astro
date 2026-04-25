@@ -1,0 +1,28 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Hero from "~/components/hero/Hero.astro";
+import About from "~/components/about/About.astro";
+import ExperienceSection from "~/components/experience/ExperienceSection.astro";
+import ProjectsSection from "~/components/projects/ProjectsSection.astro";
+import ContactSection from "~/components/contact/ContactSection.astro";
+---
+
+<BaseLayout
+  title="Andrés Pino — Engineering"
+  description="Senior electrical and systems engineering leader. 20 years across power electronics, directed energy, sonar, and undersea autonomy. Open to advisory and consulting engagements."
+>
+  <div
+    class="mx-auto grid min-h-dvh max-w-(--container-content) gap-12 px-6 py-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 lg:px-12 lg:py-0"
+  >
+    <Hero />
+
+    <section class="flex flex-col gap-32 lg:py-24">
+      {/* Phase 3 — placeholder right column. About / Experience / Projects /
+      Contact sections will be built next, one at a time. */}
+      <About />
+      <ExperienceSection />
+      <ProjectsSection />
+      <ContactSection />
+    </section>
+  </div>
+</BaseLayout>

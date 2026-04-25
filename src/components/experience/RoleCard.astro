@@ -1,0 +1,51 @@
+---
+interface Props {
+  role: string;
+  organization: string;
+  location: string;
+  dateRange: string;
+  summary: string;
+  bullets: string[];
+}
+const { role, organization, location, dateRange, summary, bullets } =
+  Astro.props;
+---
+
+<article
+  class="group relative grid gap-2 rounded-md p-4 transition-colors hover:bg-deep-navy/40 sm:grid-cols-[140px_1fr] sm:gap-6 sm:p-6"
+>
+  <p
+    class="font-mono text-xs uppercase tracking-widest text-slate/80 sm:pt-1"
+  >
+    {dateRange}
+  </p>
+
+  <div>
+    <h3
+      class="text-base font-semibold text-near-white transition-colors group-hover:text-teal"
+    >
+      {role}
+      <span class="text-light-slate"> · {organization}</span>
+    </h3>
+    <p class="mt-1 font-mono text-xs uppercase tracking-widest text-slate/70">
+      {location}
+    </p>
+
+    <p class="mt-3 text-sm text-slate">
+      {summary}
+    </p>
+
+    {
+      bullets.length > 0 && (
+        <ul class="mt-3 space-y-2 text-sm text-slate marker:text-teal">
+          {bullets.map((b) => (
+            <li class="flex gap-2">
+              <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-teal" aria-hidden="true" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</article>
