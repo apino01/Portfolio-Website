@@ -7,3 +7,6 @@ dist/
 *.log
 .vscode/
 .idea/
+
+# Source resume (unscrubbed) — never commit
+Andres Pino Resume - Sr. Mang.pdf
