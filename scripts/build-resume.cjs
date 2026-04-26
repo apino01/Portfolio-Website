@@ -204,7 +204,7 @@ const buildHeader = () => {
         children: [
           new TextRun({
             text:
-              "Power Electronics  ·  Directed Energy  ·  Sonar  ·  Undersea Autonomy  ·  System Architecture",
+              "Power Electronics  ·  Sonar  ·  Undersea Systems & Autonomy  ·  Directed Energy  ·  System Architecture",
             font: FONT,
             size: pt(9),
             color: COLOR_MUTED,
@@ -324,7 +324,7 @@ const children = [
   // PROFESSIONAL SUMMARY
   sectionHeading("Professional Summary"),
   body(
-    "Senior engineering leader with 20 years architecting and delivering complex hardware systems for defense and maritime customers — power electronics, directed energy, sonar, and undersea autonomy. Lead multi-disciplinary teams across the full product lifecycle from concept and architecture through integration, test, and customer delivery. Programs span $50M–$350M+ across General Atomics, L3Harris, Terradepth, and Lockheed Martin. MS Electrical Engineering, Johns Hopkins (power electronics)."
+    "Senior engineering leader with 20 years architecting and delivering complex hardware systems for defense and maritime customers — power electronics, undersea systems and autonomy, naval platform and seabed sensors, and directed energy. Lead multi-disciplinary teams across the full product lifecycle from concept and architecture through integration, test, and customer delivery. Programs span $50M–$350M+ across General Atomics, L3Harris, Terradepth, and Lockheed Martin. MS Electrical Engineering, Johns Hopkins (power electronics)."
   ),
 
   // CORE COMPETENCIES
@@ -335,7 +335,7 @@ const children = [
     children: [
       new TextRun({
         text:
-          "Power Electronics  ·  Directed Energy / HEL  ·  Electro-Optical Systems  ·  Sonar & Acoustics  ·  Undersea Autonomy  ·  Systems Engineering  ·  Hardware Lifecycle  ·  R&D Leadership  ·  Technical Leadership  ·  System Architecture  ·  Team Management  ·  Program Execution",
+          "Power Electronics  ·  Sonar & Acoustics  ·  Undersea Systems and Autonomy  ·  Directed Energy / HEL  ·  Systems Engineering  ·  Hardware Lifecycle  ·  R&D Leadership  ·  Technical Leadership  ·  System Architecture  ·  Team Management  ·  Program Execution",
         font: FONT,
         size: pt(10),
         color: COLOR_BODY,
