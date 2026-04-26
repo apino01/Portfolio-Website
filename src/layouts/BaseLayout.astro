@@ -1,6 +1,7 @@
 ---
 import "~/styles/global.css";
 import SEOHead from "~/components/seo/SEOHead.astro";
+import BackgroundScene from "~/components/scene/BackgroundScene.astro";
 
 interface Props {
   title: string;
@@ -17,6 +18,7 @@ const { title, description, canonical } = Astro.props;
     <SEOHead title={title} description={description} canonical={canonical} />
   </head>
   <body class="min-h-dvh">
+    <BackgroundScene />
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-teal focus:px-3 focus:py-2 focus:text-navy-black focus:font-medium"

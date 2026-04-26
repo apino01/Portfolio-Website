@@ -2,11 +2,8 @@
 import SectionHeading from "~/components/ui/SectionHeading.astro";
 import IconLink from "~/components/ui/IconLink.astro";
 import LinkedInIcon from "~/components/ui/icons/LinkedInIcon.astro";
-import MailIcon from "~/components/ui/icons/MailIcon.astro";
 
-// Formspree endpoint — replace YOUR_ID once the form is provisioned at formspree.io.
 const formspreeEndpoint = "https://formspree.io/f/xjgjzrjz";
-const directEmail = "andres.m.pino@gmail.com";
 ---
 
 <section
@@ -18,7 +15,7 @@ const directEmail = "andres.m.pino@gmail.com";
 
   <div class="grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
     <div>
-      <p class="max-w-prose text-slate">
+      <p class="max-w-prose text-light-slate">
         Open to advisory, fractional, and consulting engagements — power
         electronics, directed energy, undersea autonomy, and systems
         engineering leadership. Send a short note about your problem and a
@@ -34,7 +31,7 @@ const directEmail = "andres.m.pino@gmail.com";
         <div class="grid gap-2">
           <label
             for="contact-name"
-            class="font-mono text-xs uppercase tracking-widest text-slate/80"
+            class="font-mono text-xs uppercase tracking-widest text-light-slate"
           >
             Name
           </label>
@@ -44,14 +41,14 @@ const directEmail = "andres.m.pino@gmail.com";
             type="text"
             required
             autocomplete="name"
-            class="rounded-md border border-slate/20 bg-deep-navy/40 px-4 py-3 text-near-white placeholder:text-slate/50 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+            class="rounded-md border border-slate/40 bg-deep-navy/70 px-4 py-3 text-near-white placeholder:text-light-slate/60 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
           />
         </div>
 
         <div class="grid gap-2">
           <label
             for="contact-email"
-            class="font-mono text-xs uppercase tracking-widest text-slate/80"
+            class="font-mono text-xs uppercase tracking-widest text-light-slate"
           >
             Email
           </label>
@@ -61,30 +58,30 @@ const directEmail = "andres.m.pino@gmail.com";
             type="email"
             required
             autocomplete="email"
-            class="rounded-md border border-slate/20 bg-deep-navy/40 px-4 py-3 text-near-white placeholder:text-slate/50 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+            class="rounded-md border border-slate/40 bg-deep-navy/70 px-4 py-3 text-near-white placeholder:text-light-slate/60 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
           />
         </div>
 
         <div class="grid gap-2">
           <label
             for="contact-organization"
-            class="font-mono text-xs uppercase tracking-widest text-slate/80"
+            class="font-mono text-xs uppercase tracking-widest text-light-slate"
           >
-            Organization <span class="text-slate/50">(optional)</span>
+            Organization <span class="text-light-slate/60">(optional)</span>
           </label>
           <input
             id="contact-organization"
             name="organization"
             type="text"
             autocomplete="organization"
-            class="rounded-md border border-slate/20 bg-deep-navy/40 px-4 py-3 text-near-white placeholder:text-slate/50 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+            class="rounded-md border border-slate/40 bg-deep-navy/70 px-4 py-3 text-near-white placeholder:text-light-slate/60 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
           />
         </div>
 
         <div class="grid gap-2">
           <label
             for="contact-message"
-            class="font-mono text-xs uppercase tracking-widest text-slate/80"
+            class="font-mono text-xs uppercase tracking-widest text-light-slate"
           >
             Message
           </label>
@@ -93,7 +90,7 @@ const directEmail = "andres.m.pino@gmail.com";
             name="message"
             rows="5"
             required
-            class="resize-y rounded-md border border-slate/20 bg-deep-navy/40 px-4 py-3 text-near-white placeholder:text-slate/50 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
+            class="resize-y rounded-md border border-slate/40 bg-deep-navy/70 px-4 py-3 text-near-white placeholder:text-light-slate/60 focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal"
           ></textarea>
         </div>
 
@@ -119,7 +116,7 @@ const directEmail = "andres.m.pino@gmail.com";
             data-form-status
             role="status"
             aria-live="polite"
-            class="font-mono text-xs text-slate"
+            class="font-mono text-xs text-light-slate"
           ></p>
         </div>
       </form>
@@ -127,19 +124,16 @@ const directEmail = "andres.m.pino@gmail.com";
 
     <aside class="grid content-start gap-6">
       <div>
-        <p class="font-mono text-xs uppercase tracking-widest text-slate/80">
-          Direct
+        <p class="font-mono text-xs uppercase tracking-widest text-light-slate">
+          Response time
         </p>
-        <a
-          href={`mailto:${directEmail}`}
-          class="mt-2 inline-block break-all text-near-white hover:text-teal"
-        >
-          {directEmail}
-        </a>
+        <p class="mt-2 text-light-slate">
+          Two business days, typically same-day for short notes.
+        </p>
       </div>
 
       <div>
-        <p class="font-mono text-xs uppercase tracking-widest text-slate/80">
+        <p class="font-mono text-xs uppercase tracking-widest text-light-slate">
           Elsewhere
         </p>
         <div class="mt-2 flex gap-2">
@@ -149,17 +143,14 @@ const directEmail = "andres.m.pino@gmail.com";
           >
             <LinkedInIcon />
           </IconLink>
-          <IconLink href={`mailto:${directEmail}`} label="Email">
-            <MailIcon />
-          </IconLink>
         </div>
       </div>
 
       <div>
-        <p class="font-mono text-xs uppercase tracking-widest text-slate/80">
+        <p class="font-mono text-xs uppercase tracking-widest text-light-slate">
           Location
         </p>
-        <p class="mt-2 text-slate">San Diego, CA</p>
+        <p class="mt-2 text-light-slate">San Diego, CA</p>
       </div>
     </aside>
   </div>
