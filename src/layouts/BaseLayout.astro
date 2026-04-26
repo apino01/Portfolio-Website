@@ -2,6 +2,8 @@
 import "~/styles/global.css";
 import SEOHead from "~/components/seo/SEOHead.astro";
 import BackgroundScene from "~/components/scene/BackgroundScene.astro";
+import BathymetryFooter from "~/components/footer/BathymetryFooter.astro";
+import PingCursor from "~/components/effects/PingCursor.astro";
 
 interface Props {
   title: string;
@@ -16,6 +18,13 @@ const { title, description, canonical } = Astro.props;
 <html lang="en">
   <head>
     <SEOHead title={title} description={description} canonical={canonical} />
+    {/* Cloudflare Web Analytics — replace ADD_YOUR_TOKEN_HERE with the
+        token from dash.cloudflare.com → Web Analytics → Add a site. */}
+    <script
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "ADD_YOUR_TOKEN_HERE"}'
+    ></script>
   </head>
   <body class="min-h-dvh">
     <BackgroundScene />
@@ -28,5 +37,7 @@ const { title, description, canonical } = Astro.props;
     <main id="main">
       <slot />
     </main>
+    <BathymetryFooter />
+    <PingCursor />
   </body>
 </html>

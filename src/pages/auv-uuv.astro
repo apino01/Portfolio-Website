@@ -1,0 +1,116 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import ProjectCard from "~/components/projects/ProjectCard.astro";
+
+const all = await getCollection("projects");
+const undersea = all
+  .filter((p) =>
+    p.data.tags.some((t) =>
+      /auv|uuv|marlin|terradepth|bluefin|rap-?vla|seabed|undersea/i.test(t)
+    ) || /undersea|maritime|auv|uuv/i.test(p.data.domain)
+  )
+  .sort((a, b) => a.data.order - b.data.order);
+const cards = undersea.map((p) => ({ ...p.data, body: p.body?.trim() ?? "" }));
+
+const competencies = [
+  "Pressure-compensated battery systems",
+  "Heavy-fuel generators for in-mission recharge",
+  "Long-endurance AUV power architectures",
+  "Deep-ocean PCB design",
+  "AUV system integration & lifecycle",
+  "Passive acoustic surveillance payloads",
+];
+---
+
+<BaseLayout
+  title="AUV / UUV — Andrés Pino"
+  description="Long-endurance autonomous underwater vehicle engineering — Marlin AUV, Terradepth long-endurance vehicles, RAP-VLA passive surveillance, sub-sea integration and test."
+>
+  <div class="mx-auto max-w-(--container-content) px-6 py-16 lg:px-12 lg:py-24">
+    <a
+      href="/"
+      class="group inline-flex items-center gap-2 font-mono text-sm text-teal hover:underline"
+    >
+      <span aria-hidden="true" class="transition-transform group-hover:-translate-x-0.5">←</span>
+      Back to home
+    </a>
+
+    <header class="mt-8 max-w-3xl">
+      <p class="font-mono text-xs uppercase tracking-[0.20em] text-teal">
+        Domain · AUV / UUV
+      </p>
+      <h1 class="mt-3 text-3xl font-semibold text-near-white sm:text-4xl">
+        Untethered underwater vehicles, from concept to deployed.
+      </h1>
+      <p class="mt-5 text-lg text-light-slate">
+        I led the electrical lifecycle of the Marlin AUV at Lockheed Martin's
+        Palm Beach commercial venture — power distribution, sonar integration,
+        full-system test — and developed the rapidly deployable RAP-VLA
+        passive acoustic surveillance system. At Terradepth, I designed a
+        novel heavy-fuel generator for autonomous in-mission lithium-polymer
+        recharge, extending operational endurance to one of the longest in
+        class.
+      </p>
+    </header>
+
+    <div class="my-10 h-px w-full bg-slate/20" aria-hidden="true"></div>
+
+    <section class="grid gap-12 lg:grid-cols-[2fr_1fr]">
+      <div>
+        <h2 class="text-xl font-semibold text-near-white">Programs delivered</h2>
+        <div class="mt-4 -mx-4 grid gap-2 sm:-mx-6">
+          {
+            cards.map((c, i) => (
+              <ProjectCard
+                title={c.title}
+                organization={c.organization}
+                role={c.role}
+                year={c.year}
+                externalUrl={c.externalUrl}
+                body={c.body}
+                tags={c.tags}
+                contactId={i + 1}
+              />
+            ))
+          }
+        </div>
+      </div>
+
+      <aside class="space-y-8">
+        <div>
+          <h2 class="font-mono text-xs uppercase tracking-[0.20em] text-teal">
+            Capabilities in this domain
+          </h2>
+          <ul class="mt-3 space-y-2 text-sm text-light-slate">
+            {
+              competencies.map((c) => (
+                <li class="flex items-start gap-2">
+                  <span aria-hidden="true" class="mt-2 inline-block h-px w-3 flex-none bg-teal/60" />
+                  <span>{c}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="rounded-md border border-teal/30 bg-deep-navy/40 p-5">
+          <p class="font-mono text-[10px] uppercase tracking-[0.20em] text-teal">
+            Engage
+          </p>
+          <p class="mt-2 text-sm text-light-slate">
+            AUV/UUV architecture critique, prototype build planning,
+            or technical due diligence on a deep-sea hardware claim.
+          </p>
+          <a
+            href="/#contact"
+            class="mt-4 inline-flex items-center gap-2 font-mono text-sm text-teal hover:underline"
+          >
+            Start a conversation
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </aside>
+    </section>
+  </div>
+</BaseLayout>

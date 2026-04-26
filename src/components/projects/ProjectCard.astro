@@ -4,10 +4,12 @@ import Tag from "~/components/ui/Tag.astro";
 interface Props {
   title: string;
   organization: string;
+  role?: string;
   year: string;
   externalUrl?: string;
   body: string;
   tags: string[];
+  contactId?: number;
 }
 
 const { title, organization, year, externalUrl, body, tags } = Astro.props;

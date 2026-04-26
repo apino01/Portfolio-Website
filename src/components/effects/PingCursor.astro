@@ -1,0 +1,50 @@
+---
+// Acoustic ping on click — single expanding teal ring at the click point.
+// Inserts a transient div that animates and removes itself after the animation.
+---
+
+<style is:global>
+  .acoustic-ping {
+    position: fixed;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    border: 1px solid var(--color-teal);
+    border-radius: 9999px;
+    opacity: 0.85;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    animation: acoustic-ping-out 720ms ease-out forwards;
+  }
+  @keyframes acoustic-ping-out {
+    0%   { width: 0;     height: 0;     opacity: 0.85; border-width: 2px; }
+    100% { width: 280px; height: 280px; opacity: 0;    border-width: 1px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .acoustic-ping { display: none; }
+  }
+</style>
+
+<script>
+  // Don't fire on form fields or buttons (avoid distracting from intent)
+  const ignoreSelector = "input, textarea, select, button, a, label, [contenteditable]";
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.addEventListener(
+      "click",
+      (event) => {
+        const target = event.target as HTMLElement | null;
+        if (!target) return;
+        if (target.closest(ignoreSelector)) return;
+
+        const ping = document.createElement("div");
+        ping.className = "acoustic-ping";
+        ping.style.left = `${event.clientX}px`;
+        ping.style.top = `${event.clientY}px`;
+        document.body.appendChild(ping);
+        setTimeout(() => ping.remove(), 800);
+      },
+      { passive: true }
+    );
+  }
+</script>

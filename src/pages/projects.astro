@@ -54,14 +54,16 @@ const domains = Array.from(new Set(cards.map((c) => c.domain)));
 
     <div class="-mx-4 grid gap-2 sm:-mx-6 md:grid-cols-2">
       {
-        cards.map((c) => (
+        cards.map((c, i) => (
           <ProjectCard
             title={c.title}
             organization={c.organization}
+            role={c.role}
             year={c.year}
             externalUrl={c.externalUrl}
             body={c.body}
             tags={c.tags}
+            contactId={i + 1}
           />
         ))
       }
