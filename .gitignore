@@ -10,3 +10,9 @@ dist/
 
 # Source resume (unscrubbed) — never commit
 Andres Pino Resume - Sr. Mang.pdf
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
