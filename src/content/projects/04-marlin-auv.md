@@ -6,7 +6,7 @@ year: "2008 — 2014"
 domain: "Undersea Autonomy"
 externalUrl: "https://www.lockheedmartin.com/en-us/products/marlin.html"
 tags: ["AUV", "Sonar Suite", "Power Distribution", "Subsea"]
-featured: true
+featured: false
 order: 4
 ---
 

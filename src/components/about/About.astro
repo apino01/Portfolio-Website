@@ -2,16 +2,18 @@
 import SectionHeading from "~/components/ui/SectionHeading.astro";
 import Tag from "~/components/ui/Tag.astro";
 
-const competencies = [
+const technical = [
   "Power Electronics",
   "Sonar & Acoustics",
   "Undersea Systems & Autonomy",
   "Directed Energy / HEL",
   "Systems Engineering",
-  "Hardware Lifecycle",
-  "R&D Leadership",
-  "Technical Leadership",
   "System Architecture",
+  "Hardware Lifecycle",
+];
+const leadership = [
+  "Technical Leadership",
+  "R&D Leadership",
   "Team Management",
   "Program Execution",
 ];
@@ -20,43 +22,72 @@ const competencies = [
 <section id="about" aria-labelledby="about-heading" class="scroll-mt-24">
   <SectionHeading title="About" />
 
-  <div class="space-y-5 text-slate">
-    <p>
-      My work sits at the intersection of undersea systems, sonar, autonomy,
-      power electronics, and system integration. I currently lead the Power
-      Electronics and System Design group at General Atomics Electromagnetic
-      Systems in San Diego, supporting high-energy laser and electro-optical
-      programs for U.S. defense customers. Previously, I served as Chief
-      Engineer and Senior Manager at L3Harris, leading the manufacturing and
-      delivery of Navy sonar systems including lightweight torpedo arrays,
-      Virginia-class conformal arrays, airborne dipping sonar, and towed array
-      systems.
-    </p>
+  <div class="max-w-prose space-y-8 text-slate">
+    <div>
+      <h3 class="font-mono text-xs uppercase tracking-[0.18em] text-teal">
+        Today
+      </h3>
+      <p class="mt-2 leading-[1.75]">
+        My work sits at the intersection of undersea systems, sonar, autonomy,
+        power electronics, and system integration. I currently lead the Power
+        Electronics and System Design group at General Atomics Electromagnetic
+        Systems in San Diego, supporting high-energy laser and electro-optical
+        programs for U.S. defense customers.
+      </p>
+    </div>
 
-    <p>
-      Before that, I led electrical development for autonomous underwater
-      vehicles and subsea systems at Terradepth and Lockheed Martin, with work
-      spanning subsea surveillance platforms, sonar suites, pressure-tolerant
-      power systems, battery-powered architectures, and integrated maritime
-      payloads.
-    </p>
+    <div>
+      <h3 class="font-mono text-xs uppercase tracking-[0.18em] text-teal">
+        Background
+      </h3>
+      <p class="mt-2 leading-[1.75]">
+        Previously, I served as Chief Engineer and Senior Manager at L3Harris,
+        leading the manufacturing and delivery of Navy sonar systems including
+        lightweight torpedo arrays, Virginia-class conformal arrays, airborne
+        dipping sonar, and towed array systems. Before that, I led electrical
+        development for autonomous underwater vehicles and subsea systems at
+        Terradepth and Lockheed Martin — subsea surveillance platforms, sonar
+        suites, pressure-tolerant power systems, battery-powered architectures,
+        and integrated maritime payloads.
+      </p>
+    </div>
 
-    <p>
-      Today, I advise startups, small businesses, and engineering teams that
-      need senior technical judgment on hard hardware problems — system
-      architecture, power conversion and distribution, design reviews,
-      integration risk, maritime autonomy, subsea sensing, and battery-powered
-      systems designed for precision, reliability, and harsh environments.
-    </p>
-
-    <p>
-      I hold an M.S. in Electrical Engineering from Johns Hopkins with a focus
-      in power electronics and analog circuit design, and I maintain an active
-      Top Secret clearance.
-    </p>
+    <div>
+      <h3 class="font-mono text-xs uppercase tracking-[0.18em] text-teal">
+        What I do now
+      </h3>
+      <p class="mt-2 leading-[1.75]">
+        I advise startups, small businesses, and engineering teams that need
+        senior technical judgment on hard hardware problems — system
+        architecture, power conversion and distribution, design reviews,
+        integration risk, maritime autonomy, subsea sensing, and
+        battery-powered systems designed for precision, reliability, and harsh
+        environments.
+      </p>
+      <p class="mt-3 text-sm leading-relaxed text-slate/85">
+        M.S. Electrical Engineering, Johns Hopkins (power electronics &amp;
+        analog circuit design) · Active Top Secret clearance.
+      </p>
+    </div>
   </div>
 
-  <ul class="mt-8 flex flex-wrap gap-2" aria-label="Core competencies">
-    {competencies.map((c) => <li><Tag label={c} /></li>)}
-  </ul>
+  {/* Competencies — split into Technical / Leadership groups for visual breath */}
+  <div class="mt-10 space-y-4">
+    <div>
+      <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.20em] text-teal/85">
+        Technical domains
+      </p>
+      <ul class="flex flex-wrap gap-2" aria-label="Technical domains">
+        {technical.map((c) => <li><Tag label={c} /></li>)}
+      </ul>
+    </div>
+    <div>
+      <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.20em] text-teal/85">
+        Leadership &amp; program execution
+      </p>
+      <ul class="flex flex-wrap gap-2" aria-label="Leadership signals">
+        {leadership.map((c) => <li><Tag label={c} /></li>)}
+      </ul>
+    </div>
+  </div>
 </section>
