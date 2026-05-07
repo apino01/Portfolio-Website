@@ -19,6 +19,94 @@ const canonicalURL = canonical
   ? new URL(canonical, Astro.site).toString()
   : new URL(Astro.url.pathname, Astro.site).toString();
 const ogImageURL = new URL(ogImage, Astro.site).toString();
+
+// JSON-LD structured data — Person + WebSite + ProfessionalService graph.
+// Emitted on every page so search engines can identify Andrés as the author/
+// service provider regardless of entry point.
+const siteUrl = Astro.site?.toString() ?? "https://andrespino.com/";
+const personId = `${siteUrl}#person`;
+const websiteId = `${siteUrl}#website`;
+const serviceId = `${siteUrl}#service`;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": personId,
+      name: "Andrés Pino",
+      givenName: "Andrés",
+      familyName: "Pino",
+      jobTitle: "Senior Manager — Power Electronics & System Design",
+      worksFor: {
+        "@type": "Organization",
+        name: "General Atomics Electromagnetic Systems",
+      },
+      url: siteUrl,
+      image: new URL("/og-image.png", Astro.site).toString(),
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "San Diego",
+        addressRegion: "CA",
+        addressCountry: "US",
+      },
+      alumniOf: [
+        {
+          "@type": "CollegeOrUniversity",
+          name: "Johns Hopkins University Whiting School of Engineering",
+        },
+        {
+          "@type": "CollegeOrUniversity",
+          name: "University of Central Florida",
+        },
+      ],
+      knowsAbout: [
+        "Power Electronics",
+        "High Energy Laser Systems",
+        "Directed Energy Weapons",
+        "Electro-Optical Systems",
+        "Sonar Systems",
+        "Naval Acoustic Sensors",
+        "Autonomous Underwater Vehicles",
+        "Unmanned Underwater Vehicles",
+        "Defense Systems Engineering",
+        "Maritime Systems Engineering",
+        "Anti-Submarine Warfare",
+      ],
+      sameAs: [
+        "https://www.linkedin.com/in/andresmpino",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": websiteId,
+      url: siteUrl,
+      name: siteName,
+      inLanguage: "en-US",
+      publisher: { "@id": personId },
+      author: { "@id": personId },
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": serviceId,
+      name: "Andrés Pino — Engineering Advisory & Consulting",
+      description:
+        "Senior engineering advisory and consulting: architecture review, design audit, and technical due diligence for directed-energy, sonar, AUV/UUV, and power-electronics programs.",
+      provider: { "@id": personId },
+      areaServed: {
+        "@type": "Country",
+        name: "United States",
+      },
+      serviceType: [
+        "Engineering Advisory",
+        "Architecture Review",
+        "Design Audit",
+        "Technical Due Diligence",
+      ],
+      url: siteUrl,
+    },
+  ],
+};
 ---
 
 <meta charset="UTF-8" />
@@ -43,10 +131,14 @@ const ogImageURL = new URL(ogImage, Astro.site).toString();
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content="en_US" />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageURL} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Andrés Pino — Senior Defense & Maritime Engineering Advisor" />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={fullTitle} />
@@ -54,3 +146,6 @@ const ogImageURL = new URL(ogImage, Astro.site).toString();
 <meta name="twitter:image" content={ogImageURL} />
 
 <link rel="sitemap" href="/sitemap-index.xml" />
+
+{/* Structured data — Person + WebSite + ProfessionalService */}
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
