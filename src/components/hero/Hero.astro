@@ -6,6 +6,7 @@ import SideNav from "~/components/nav/SideNav.astro";
 import IconLink from "~/components/ui/IconLink.astro";
 import LinkedInIcon from "~/components/ui/icons/LinkedInIcon.astro";
 import DocumentIcon from "~/components/ui/icons/DocumentIcon.astro";
+import SonarReturn from "~/components/scene/SonarReturn.astro";
 
 const navItems = [
   { id: "about", label: "About" },
@@ -58,6 +59,11 @@ const navItems = [
     <p class="font-mono text-xs uppercase tracking-widest text-slate/80">
       Active TS Clearance · San Diego, CA
     </p>
+
+    {/* Decorative sonar-return trace */}
+    <div class="max-w-md">
+      <SonarReturn label="Acoustic return · 4.3 kHz" />
+    </div>
 
     {/* Primary CTA — convert visitors who arrived through a referral */}
     <a

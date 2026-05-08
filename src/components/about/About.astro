@@ -20,7 +20,7 @@ const leadership = [
 ---
 
 <section id="about" aria-labelledby="about-heading" class="scroll-mt-24">
-  <SectionHeading title="About" />
+  <SectionHeading title="About" depth="0 — 200 m" />
 
   <div class="max-w-prose space-y-8 text-slate">
     <div>
@@ -87,6 +87,30 @@ const leadership = [
       </p>
       <ul class="flex flex-wrap gap-2" aria-label="Leadership signals">
         {leadership.map((c) => <li><Tag label={c} /></li>)}
+      </ul>
+    </div>
+  </div>
+
+  {/* How I work — modern AI-augmented tooling on a 20-year foundation */}
+  <div class="mt-10 max-w-prose space-y-3">
+    <h3 class="font-mono text-xs uppercase tracking-[0.18em] text-teal">
+      How I work
+    </h3>
+    <p class="text-sm leading-relaxed text-slate">
+      I pair 20 years of systems-engineering judgment with modern
+      AI-augmented tooling — faster turn on artifacts, fewer dropped details,
+      tighter review loops on critical paths. Force multipliers, not
+      substitutes for engineering judgment.
+    </p>
+    <div>
+      <p class="mb-2 mt-4 font-mono text-[10px] uppercase tracking-[0.20em] text-teal/85">
+        Daily tooling
+      </p>
+      <ul class="flex flex-wrap gap-2" aria-label="Daily tooling">
+        <li><Tag label="Claude Code" /></li>
+        <li><Tag label="Cowork" /></li>
+        <li><Tag label="Claude" /></li>
+        <li><Tag label="ChatGPT Codex" /></li>
       </ul>
     </div>
   </div>

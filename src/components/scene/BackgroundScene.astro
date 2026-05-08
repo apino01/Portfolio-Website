@@ -1,4 +1,5 @@
 ---
+import WaterSurface from "./WaterSurface.astro";
 // Subsea depth scene v5 — US Navy fleet, populated.
 //
 // Depth bands:
@@ -54,6 +55,10 @@
   </svg>
 
   {/* ════════ SURFACE BAND ════════ */}
+
+  {/* Water surface — wavy line marking the air/water transition. The
+     destroyer hull rides it; the helicopter cable passes through it. */}
+  <WaterSurface />
 
   {/* Destroyer */}
   <svg

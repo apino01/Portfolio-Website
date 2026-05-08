@@ -1,0 +1,65 @@
+---
+// Sonar return trace — a small decorative oscilloscope/sonar-return line
+// for use in the hero. Suggests acoustic energy reflecting off a target.
+// Animated draw + fade loop, optional label.
+interface Props {
+  label?: string;
+}
+const { label = "Acoustic return · 4.3 kHz" } = Astro.props;
+---
+
+<div class="sonar-return" aria-hidden="true">
+  <svg viewBox="0 0 240 24" preserveAspectRatio="none" class="sonar-return__svg">
+    <path
+      d="M0 12 L40 12 L48 6 L52 18 L56 4 L60 20 L64 8 L72 12 L88 12 L96 10 L100 14 L108 12 L140 12 L148 8 L152 16 L156 12 L240 12"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="sonar-return__trace"
+    />
+  </svg>
+  {label && <span class="sonar-return__label">{label}</span>}
+</div>
+
+<style>
+  .sonar-return {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: rgb(56 232 198 / 0.65);
+  }
+  .sonar-return__svg {
+    flex: 1;
+    height: 1rem;
+    overflow: visible;
+  }
+  .sonar-return__trace {
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    animation: sonar-trace 4.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 2px rgb(56 232 198 / 0.5));
+  }
+  .sonar-return__label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(56 232 198 / 0.55);
+    flex-shrink: 0;
+  }
+  @keyframes sonar-trace {
+    0% { stroke-dashoffset: 600; opacity: 0; }
+    20% { opacity: 1; }
+    50% { stroke-dashoffset: 0; opacity: 1; }
+    80% { opacity: 0.5; }
+    100% { stroke-dashoffset: -600; opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sonar-return__trace {
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+  }
+</style>

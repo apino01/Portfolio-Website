@@ -2,7 +2,7 @@
 
 @theme {
   /* Oceanic palette — deep water at twilight */
-  --color-abyss: #03101e;          /* deepest, footer / subtle gradient bottom */
+  --color-abyss: #02080f;          /* deepest, footer / abyssal bottom */
   --color-navy-black: #061a2c;     /* primary surface — deep ocean */
   --color-deep-navy: #0a2540;      /* alternate sections — mid-water */
   --color-surface-glow: #0f3257;   /* card hover, subtle highlights */
@@ -28,13 +28,29 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Depth-of-water gradient — surface (lighter) at top, abyssal at bottom.
+       Lives on <html> so it spans the full document height; you literally
+       descend as you scroll. */
+    background:
+      linear-gradient(
+        to bottom,
+        #08263f 0%,        /* pre-dawn sky / atmosphere */
+        #0a2c47 5%,        /* horizon glow */
+        #0c2842 7.5%,      /* immediately under the waterline */
+        #07203a 18%,       /* photic */
+        #061a2c 35%,       /* mesopelagic */
+        #04162a 60%,       /* bathyal */
+        #03101e 80%,
+        #02080f 100%       /* abyssal */
+      );
+    background-attachment: fixed;
+    min-height: 100%;
   }
 
   body {
     background:
-      radial-gradient(ellipse 100% 60% at 80% 0%, rgb(56 232 198 / 0.04), transparent 60%),
-      radial-gradient(ellipse 80% 50% at 0% 100%, rgb(15 50 87 / 0.5), transparent 60%),
-      var(--color-navy-black);
+      radial-gradient(ellipse 100% 60% at 80% 0%, rgb(56 232 198 / 0.05), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 0% 100%, rgb(15 50 87 / 0.35), transparent 60%);
     background-attachment: fixed;
     color: var(--color-slate);
     font-family: var(--font-sans);

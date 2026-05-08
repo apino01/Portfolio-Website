@@ -1,0 +1,70 @@
+---
+// Caustic light — the slow-shifting glow you see in the upper water column,
+// or from a distant vessel's spotlight. Three layered radial-gradient blobs,
+// blurred and screen-blended, drift with eased keyframes.
+---
+
+<div class="caustic-light" aria-hidden="true">
+  <div class="caustic-blob caustic-blob-1"></div>
+  <div class="caustic-blob caustic-blob-2"></div>
+  <div class="caustic-blob caustic-blob-3"></div>
+</div>
+
+<style>
+  .caustic-light {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    opacity: 0.55;
+    mix-blend-mode: screen;
+  }
+  .caustic-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    will-change: transform;
+  }
+  .caustic-blob-1 {
+    /* Pushed down so the top of the page (sky zone) stays clean — caustic
+       light belongs to the water column. */
+    top: 10%;
+    left: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, rgb(56 232 198 / 0.18), transparent 70%);
+    animation: caustic-a 38s ease-in-out infinite;
+  }
+  .caustic-blob-2 {
+    top: 25%;
+    right: -22%;
+    width: 75vw;
+    height: 75vw;
+    background: radial-gradient(circle, rgb(15 50 87 / 0.55), transparent 70%);
+    animation: caustic-b 46s ease-in-out infinite;
+  }
+  .caustic-blob-3 {
+    bottom: -18%;
+    left: 15%;
+    width: 55vw;
+    height: 55vw;
+    background: radial-gradient(circle, rgb(56 232 198 / 0.10), transparent 70%);
+    animation: caustic-c 54s ease-in-out infinite;
+  }
+  @keyframes caustic-a {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(8vw, 6vh, 0) scale(1.1); }
+  }
+  @keyframes caustic-b {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(-6vw, -8vh, 0) scale(1.15); }
+  }
+  @keyframes caustic-c {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(4vw, -10vh, 0) scale(1.06); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .caustic-blob { animation: none; }
+  }
+</style>

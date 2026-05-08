@@ -1,0 +1,76 @@
+---
+// Marine snow — slow drifting particulate, the kind ROVs always show
+// drifting through their headlights at depth. Stable per-particle params
+// pre-computed at build time so SSR is deterministic.
+const COUNT = 32;
+const rand = (seed: number) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+const particles = Array.from({ length: COUNT }, (_, i) => ({
+  left: rand(i * 7.31) * 100,
+  size: 1 + rand(i * 19.91) * 2.6,
+  delay: rand(i * 3.17) * -50,
+  duration: 38 + rand(i * 5.41) * 36,
+  drift: rand(i * 11.13) * 60 - 30,
+  opacity: 0.10 + rand(i * 17.71) * 0.22,
+  glow: rand(i * 23.13) > 0.5 ? 1 : 0,
+}));
+---
+
+<div class="marine-snow" aria-hidden="true">
+  {particles.map((p) => (
+    <span
+      class:list={["snow-particle", p.glow && "snow-particle--glow"]}
+      style={`
+        left: ${p.left}%;
+        width: ${p.size}px;
+        height: ${p.size}px;
+        --drift: ${p.drift}px;
+        --opacity: ${p.opacity};
+        animation-duration: ${p.duration}s;
+        animation-delay: ${p.delay}s;
+      `}
+    />
+  ))}
+</div>
+
+<style>
+  .marine-snow {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .snow-particle {
+    /* Particles only appear at depth — spawn line is roughly halfway down
+       the viewport, reinforcing that marine snow is an aphotic-zone
+       phenomenon, not a surface one. */
+    position: absolute;
+    top: 50vh;
+    border-radius: 50%;
+    background: rgb(203 213 225 / var(--opacity, 0.2));
+    animation: snow-drift linear infinite;
+    will-change: transform, opacity;
+  }
+  .snow-particle--glow {
+    background: rgb(56 232 198 / var(--opacity, 0.2));
+    box-shadow: 0 0 4px rgb(56 232 198 / 0.35);
+  }
+  @keyframes snow-drift {
+    0% {
+      transform: translate3d(0, 0, 0);
+      opacity: 0;
+    }
+    8% { opacity: 1; }
+    92% { opacity: 1; }
+    100% {
+      transform: translate3d(var(--drift), 105vh, 0);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .snow-particle { animation: none; opacity: 0.12; }
+  }
+</style>

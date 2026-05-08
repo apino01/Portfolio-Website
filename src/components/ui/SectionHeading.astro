@@ -3,8 +3,10 @@ interface Props {
   title: string;
   /** Optional 2-digit ordinal prefix shown as small mono eyebrow above title. */
   number?: string;
+  /** Optional decimal depth tag like "180 m" — appears at the right end of the contour line. */
+  depth?: string;
 }
-const { title, number } = Astro.props;
+const { title, number, depth } = Astro.props;
 ---
 
 <header
@@ -22,9 +24,41 @@ const { title, number } = Astro.props;
     <h2 class="text-2xl font-semibold tracking-tight text-near-white sm:text-3xl">
       {title}
     </h2>
-    <span
-      class="ml-1 hidden h-px flex-1 translate-y-[1px] bg-gradient-to-r from-slate/30 to-transparent sm:block"
-      aria-hidden="true"></span>
+
+    {/* Bathymetric contour — replaces the simple gradient rule */}
+    <div class="ml-1 hidden h-4 flex-1 sm:flex sm:items-center" aria-hidden="true">
+      <svg
+        viewBox="0 0 600 16"
+        preserveAspectRatio="none"
+        class="h-full w-full overflow-visible"
+      >
+        <path
+          d="M0 6 Q 50 2 100 6 T 200 6 T 300 6 T 400 6 T 500 6 T 600 6"
+          fill="none"
+          stroke="rgb(56 232 198 / 0.45)"
+          stroke-width="0.6"
+        />
+        <path
+          d="M0 9 Q 60 5 120 9 T 240 9 T 360 9 T 480 9 T 600 9"
+          fill="none"
+          stroke="rgb(56 232 198 / 0.22)"
+          stroke-width="0.5"
+        />
+        <path
+          d="M0 12 Q 70 8 140 12 T 280 12 T 420 12 T 600 12"
+          fill="none"
+          stroke="rgb(56 232 198 / 0.10)"
+          stroke-width="0.5"
+        />
+      </svg>
+      {
+        depth && (
+          <span class="ml-3 flex-shrink-0 font-mono text-[9px] uppercase tracking-[0.20em] text-teal/55">
+            {depth}
+          </span>
+        )
+      }
+    </div>
   </div>
 </header>
 

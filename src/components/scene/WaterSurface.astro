@@ -1,0 +1,102 @@
+---
+// Water surface — quiet, suggested rather than drawn. A soft tonal shift
+// from "atmosphere" above to "water column" below, plus a barely-perceptible
+// ripple texture at the inflection. The destroyer hull rides this band;
+// the helicopter cable passes through it. Intent is felt, not announced.
+---
+
+<div class="water-surface" aria-hidden="true">
+  {/* Soft brightening just above the surface — atmospheric haze */}
+  <div class="ws-haze"></div>
+
+  {/* Tonal inflection band — slightly lighter strip blends into darker water below */}
+  <div class="ws-band"></div>
+
+  {/* Whisper-thin ripple, only readable on close inspection */}
+  <svg
+    class="ws-ripple"
+    viewBox="0 0 1600 24"
+    preserveAspectRatio="none"
+  >
+    <defs>
+      <linearGradient id="ws-ripple-fade" x1="0" y1="0" x2="100%" y2="0">
+        <stop offset="0%" stop-color="rgb(203,213,225)" stop-opacity="0" />
+        <stop offset="30%" stop-color="rgb(203,213,225)" stop-opacity="0.20" />
+        <stop offset="70%" stop-color="rgb(203,213,225)" stop-opacity="0.20" />
+        <stop offset="100%" stop-color="rgb(203,213,225)" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    <path
+      class="ws-ripple-line"
+      d="M 0 12 Q 100 9 200 12 T 400 12 T 600 12 T 800 12 T 1000 12 T 1200 12 T 1400 12 T 1600 12"
+      fill="none"
+      stroke="url(#ws-ripple-fade)"
+      stroke-width="0.5"
+    />
+  </svg>
+</div>
+
+<style>
+  .water-surface {
+    position: absolute;
+    top: 7%;
+    left: 0;
+    right: 0;
+    height: 220px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Atmospheric haze above — barely there */
+  .ws-haze {
+    position: absolute;
+    top: -90px;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(127 219 255 / 0.012) 60%,
+      rgb(127 219 255 / 0.025)
+    );
+  }
+
+  /* The transition band itself — light strip that fades into darker water */
+  .ws-band {
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    height: 220px;
+    background: linear-gradient(
+      to bottom,
+      rgb(127 219 255 / 0.04) 0%,
+      rgb(127 219 255 / 0.025) 8px,
+      transparent 16px,
+      rgb(2 8 15 / 0.12) 50%,
+      rgb(2 8 15 / 0.06) 80%,
+      transparent
+    );
+  }
+
+  .ws-ripple {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 24px;
+    overflow: visible;
+  }
+  .ws-ripple-line {
+    animation: ws-ripple-drift 14s ease-in-out infinite;
+  }
+
+  @keyframes ws-ripple-drift {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-18px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ws-ripple-line { animation: none; }
+  }
+</style>
