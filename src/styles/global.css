@@ -1,3 +1,15 @@
+/* Self-hosted fonts via fontsource — eliminates render-blocking external
+   stylesheet from fonts.googleapis.com and lets the browser fetch font
+   files from our own origin (cached at the Cloudflare edge). */
+@import "@fontsource/inter/300.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
+
 @import "tailwindcss";
 
 @theme {
@@ -95,4 +107,31 @@
   color: var(--color-teal);
   font-size: 0.875rem;
   letter-spacing: 0.05em;
+}
+
+/* Scene deferral — body starts with .scene-deferred, JS removes it after
+   requestIdleCallback. Hides the heavy ambient layers during initial
+   render so they don't compete with the LCP element for paint time, then
+   fades them in smoothly. */
+.scene-deferred .background-scene,
+.scene-deferred .caustic-light,
+.scene-deferred .marine-snow {
+  opacity: 0;
+}
+.background-scene,
+.caustic-light,
+.marine-snow {
+  transition: opacity 500ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-deferred .background-scene,
+  .scene-deferred .caustic-light,
+  .scene-deferred .marine-snow {
+    opacity: 1;
+  }
+  .background-scene,
+  .caustic-light,
+  .marine-snow {
+    transition: none;
+  }
 }

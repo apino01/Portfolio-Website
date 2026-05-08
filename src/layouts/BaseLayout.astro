@@ -1,27 +1,50 @@
 ---
 import "~/styles/global.css";
+import { getImage } from "astro:assets";
 import SEOHead from "~/components/seo/SEOHead.astro";
 import BackgroundScene from "~/components/scene/BackgroundScene.astro";
 import CausticLight from "~/components/scene/CausticLight.astro";
 import MarineSnow from "~/components/scene/MarineSnow.astro";
 import BathymetryFooter from "~/components/footer/BathymetryFooter.astro";
 import PingCursor from "~/components/effects/PingCursor.astro";
+import headshot from "~/assets/headshot.jpg";
 
 interface Props {
   title: string;
   description: string;
   canonical?: string;
+  /** When true, emits a high-priority preload hint for the hero headshot.
+   *  Pass on pages that render the Hero so the LCP element starts fetching
+   *  before the browser parses the <img> tag. */
+  preloadHero?: boolean;
 }
 
-const { title, description, canonical } = Astro.props;
+const { title, description, canonical, preloadHero = false } = Astro.props;
+
+// Resolve the optimized AVIF version of the headshot for preloading.
+// 80px @ 2x density matches the displayed 80x80 avatar in the Hero.
+const heroPreload = preloadHero
+  ? await getImage({ src: headshot, format: "avif", width: 160, height: 160 })
+  : null;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <SEOHead title={title} description={description} canonical={canonical} />
+    {
+      heroPreload && (
+        <link
+          rel="preload"
+          as="image"
+          href={heroPreload.src}
+          type="image/avif"
+          fetchpriority="high"
+        />
+      )
+    }
   </head>
-  <body class="min-h-dvh">
+  <body class="min-h-dvh scene-deferred">
     <CausticLight />
     <BackgroundScene />
     <MarineSnow />
@@ -36,5 +59,22 @@ const { title, description, canonical } = Astro.props;
     </main>
     <BathymetryFooter />
     <PingCursor />
+
+    {/* Defer ambient scene paint until after LCP — keeps initial render
+        focused on the hero, then fades the maritime layers in once the
+        browser is idle. SSR HTML still includes everything so SEO and
+        no-JS users see it; this only affects perceived load. */}
+    <script is:inline>
+      (function () {
+        var reveal = function () {
+          document.body.classList.remove("scene-deferred");
+        };
+        if ("requestIdleCallback" in window) {
+          requestIdleCallback(reveal, { timeout: 1500 });
+        } else {
+          setTimeout(reveal, 600);
+        }
+      })();
+    </script>
   </body>
 </html>
