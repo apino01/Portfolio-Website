@@ -20,12 +20,23 @@ const { title, number, depth } = Astro.props;
       </p>
     )
   }
-  <div class="mt-2 flex items-center gap-4">
+  <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
     <h2 class="text-2xl font-semibold tracking-tight text-near-white sm:text-3xl">
       {title}
     </h2>
 
-    {/* Bathymetric contour — replaces the simple gradient rule */}
+    {/* Mobile: depth tag inline next to heading. On sm+ this gets hidden
+        and the desktop variant inside the bathymetric contour renders. */}
+    {
+      depth && (
+        <span class="font-mono text-[10px] uppercase tracking-[0.20em] text-teal/65 sm:hidden">
+          {depth}
+        </span>
+      )
+    }
+
+    {/* Bathymetric contour — desktop only (needs horizontal real estate
+        to read as a chart; on mobile the inline tag above is enough). */}
     <div class="ml-1 hidden h-4 flex-1 sm:flex sm:items-center" aria-hidden="true">
       <svg
         viewBox="0 0 600 16"

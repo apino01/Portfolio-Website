@@ -4,7 +4,8 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="bathy-footer relative mt-24 overflow-hidden">
-  {/* Depth contour SVG — bathymetric chart aesthetic */}
+  {/* Depth contour SVG — bathymetric chart aesthetic (curves only; depth
+      labels live in HTML below so they scale responsively on mobile). */}
   <svg
     class="bathy-contours pointer-events-none absolute inset-0 h-full w-full"
     viewBox="0 0 1200 240"
@@ -19,17 +20,25 @@ const year = new Date().getFullYear();
       <path d="M 0 170 Q 200 158 400 172 T 800 166 T 1200 174" opacity="0.22" />
       <path d="M 0 210 Q 200 196 400 212 T 800 206 T 1200 214" opacity="0.32" />
     </g>
-    <g fill="var(--color-teal)" font-family="ui-monospace, monospace" font-size="8" opacity="0.55">
-      <text x="20" y="28">−100m</text>
-      <text x="20" y="58">−300m</text>
-      <text x="20" y="88">−600m</text>
-      <text x="20" y="128">−1500m</text>
-      <text x="20" y="168">−3000m</text>
-      <text x="20" y="208">−6000m · ABYSS</text>
-    </g>
   </svg>
 
-  <div class="relative px-6 py-12 lg:px-16 xl:px-24 2xl:px-32">
+  {/* Depth labels — real HTML text so they scale with viewport instead
+      of stretching with the SVG's preserveAspectRatio="none". Hidden on
+      narrow phones where there isn't horizontal room without overlapping
+      the footer columns. */}
+  <ul
+    class="bathy-labels pointer-events-none absolute inset-y-0 left-3 hidden flex-col justify-between py-12 font-mono text-[9px] uppercase tracking-[0.18em] text-teal/55 md:flex"
+    aria-hidden="true"
+  >
+    <li>−100 m</li>
+    <li>−300 m</li>
+    <li>−600 m</li>
+    <li>−1500 m</li>
+    <li>−3000 m</li>
+    <li>−6000 m · Abyss</li>
+  </ul>
+
+  <div class="relative px-6 py-12 md:pl-24 lg:pl-32 xl:pl-36 lg:pr-16 xl:pr-24 2xl:pr-32">
     <div class="grid gap-8 sm:grid-cols-[2fr_1fr_1fr]">
       <div>
         <p class="font-mono text-[10px] uppercase tracking-[0.20em] text-teal">
