@@ -6,7 +6,7 @@ year: "2014 — 2019"
 domain: "Electro-Optical / Directed Energy"
 externalUrl: "https://www.lockheedmartin.com/en-us/news/features/2021/more-than-a-laser-helios-is-an-integrated-weapon-system.html"
 tags: ["HEL", "Shipboard", "Counter-UAS", "Aegis Integration"]
-featured: true
+featured: false
 order: 8
 ---
 
