@@ -30,11 +30,12 @@ const cards = featured.map((p) => ({
           title={c.title}
           organization={c.organization}
           role={c.role}
-          year={c.year}
+          domain={c.domain}
           externalUrl={c.externalUrl}
           body={c.body}
           tags={c.tags}
           contactId={i + 1}
+          index={i}
         />
       ))
     }

@@ -5,30 +5,53 @@ interface Props {
   title: string;
   organization: string;
   role?: string;
-  year: string;
+  year?: string;
+  domain?: string;
   externalUrl?: string;
   body: string;
   tags: string[];
   contactId?: number;
+  index?: number;
 }
 
-const { title, organization, year, externalUrl, body, tags } = Astro.props;
+const { title, organization, domain, externalUrl, body, tags, index = 0 } =
+  Astro.props;
 
-const hostname = externalUrl ? new URL(externalUrl).hostname.replace(/^www\./, "") : null;
+const hostname = externalUrl
+  ? new URL(externalUrl).hostname.replace(/^www\./, "")
+  : null;
+
+// Domain-keyed accent — kept within the site's cyan/teal/blue family so the
+// cards stay cohesive while becoming scannable by discipline.
+const domainAccent: Record<string, string> = {
+  SONAR: "#38e8c6",
+  "Electro-Optical / Directed Energy": "#7fe3ff",
+  "Undersea Autonomy": "#5ab9ea",
+};
+const accent = (domain && domainAccent[domain]) || "#38e8c6";
 ---
 
 <article
-  class="group relative grid gap-4 rounded-md border border-transparent p-4 transition-colors hover:border-teal/20 hover:bg-deep-navy/40 sm:p-6"
+  class="project-card group relative grid gap-4 rounded-md border border-transparent p-4 pl-5 transition-colors hover:border-teal/20 hover:bg-deep-navy/40 sm:p-6 sm:pl-7"
+  style={`--accent: ${accent}; --reveal-delay: ${index * 80}ms;`}
+  data-project-card
 >
+  {/* Domain accent bar — left edge, brightens + extends on hover */}
+  <span class="project-card__accent" aria-hidden="true"></span>
+
+  {/* Targeting-reticle corner ticks — fade in on hover */}
+  <span class="reticle reticle--tl" aria-hidden="true"></span>
+  <span class="reticle reticle--br" aria-hidden="true"></span>
+
   <div class="flex items-baseline justify-between gap-4">
-    <p class="font-mono text-xs uppercase tracking-widest text-slate/80">
-      {year}
-    </p>
     {
-      hostname && (
-        <p class="font-mono text-xs text-slate/70">{hostname}</p>
+      domain && (
+        <p class="project-card__domain font-mono text-[10px] uppercase tracking-[0.2em]">
+          {domain}
+        </p>
       )
     }
+    {hostname && <p class="font-mono text-xs text-slate/70">{hostname}</p>}
   </div>
 
   <div>
@@ -44,7 +67,12 @@ const hostname = externalUrl ? new URL(externalUrl).hostname.replace(/^www\./, "
             class="before:absolute before:inset-0 before:content-['']"
           >
             {title}
-            <span aria-hidden="true" class="ml-1 inline-block transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
+            <span
+              aria-hidden="true"
+              class="ml-1 inline-block transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            >
+              ↗
+            </span>
           </a>
         ) : (
           <>{title}</>
@@ -70,3 +98,102 @@ const hostname = externalUrl ? new URL(externalUrl).hostname.replace(/^www\./, "
     )
   }
 </article>
+
+<style>
+  .project-card {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 600ms ease-out,
+      transform 600ms ease-out,
+      border-color 200ms ease,
+      background-color 200ms ease;
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .project-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .project-card__domain {
+    color: color-mix(in srgb, var(--accent) 80%, white);
+  }
+
+  .project-card__accent {
+    position: absolute;
+    left: 0;
+    top: 14%;
+    bottom: 14%;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    opacity: 0.35;
+    transition:
+      opacity 250ms ease,
+      top 250ms ease,
+      bottom 250ms ease;
+  }
+  .project-card:hover .project-card__accent {
+    opacity: 0.9;
+    top: 6%;
+    bottom: 6%;
+  }
+
+  .reticle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--accent);
+    opacity: 0;
+    transition: opacity 250ms ease;
+  }
+  .reticle--tl {
+    top: 8px;
+    left: 8px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .reticle--br {
+    bottom: 8px;
+    right: 8px;
+    border-left: 0;
+    border-top: 0;
+  }
+  .project-card:hover .reticle {
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-card {
+      opacity: 1;
+      transform: none;
+      transition:
+        border-color 200ms ease,
+        background-color 200ms ease;
+    }
+    .project-card__accent,
+    .reticle {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const cards = document.querySelectorAll<HTMLElement>("[data-project-card]");
+  if ("IntersectionObserver" in window && cards.length > 0) {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-visible");
+            obs.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -8% 0px" }
+    );
+    cards.forEach((c) => obs.observe(c));
+  } else {
+    cards.forEach((c) => c.classList.add("is-visible"));
+  }
+</script>
