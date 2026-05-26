@@ -11,17 +11,15 @@ import WaterSurface from "./WaterSurface.astro";
 //   abyssal seabed   → pipeline + wellhead + sensor pod + docked AUV
 //                      + bottom-scanning UUV pinging the silt
 //
-// Helicopter sequence (90s loop, 11 phases):
-//   0–7%   fly in from right
-//   7–12%  hover (sonar tucked)
-//   12–25% lower sonar package on cable
-//   25–32% 8 arms deploy radially in lower hemisphere
-//   32–42% 3 hydrophone plates drop
-//   42–52% plates retract
-//   52–62% arms close
-//   62–75% raise sonar back to helicopter
-//   75–82% hover (sonar tucked)
-//   82–100% fly off to the left
+// Helicopter sequence (90s loop) — fast deploy, quick exit:
+//   0–5%    fly in from right
+//   5–14%   lower sonar package on cable (fast)
+//   14–20%  8 arms deploy radially in lower hemisphere
+//   20–30%  3 hydrophone plates drop + ping
+//   30–40%  plates retract, arms close
+//   40–48%  raise sonar back to helicopter
+//   48–60%  fly off to the left
+//   60–100% off-station (rest)
 ---
 
 <div
@@ -698,7 +696,7 @@ import WaterSurface from "./WaterSurface.astro";
   }
 
   /* ═══════════════════════════════════════════════════════════════════════
-     HELICOPTER + HELRAS DEPLOYMENT CHOREOGRAPHY (90s loop, 11 phases)
+     HELICOPTER + HELRAS DEPLOYMENT CHOREOGRAPHY (90s loop — fast deploy, quick exit)
      ═══════════════════════════════════════════════════════════════════════ */
 
   /* Phase 1: helicopter container flies in/out horizontally */
@@ -706,10 +704,10 @@ import WaterSurface from "./WaterSurface.astro";
     animation: helo-flyby 90s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   }
   @keyframes helo-flyby {
-    0%   { transform: translate3d(220%, 0, 0); }   /* off-screen right */
-    7%   { transform: translate3d(0, 0, 0); }       /* arrived */
-    82%  { transform: translate3d(0, 0, 0); }       /* still on station */
-    100% { transform: translate3d(-220%, 0, 0); }   /* off-screen left */
+    0%        { transform: translate3d(220%, 0, 0); }   /* off-screen right */
+    5%        { transform: translate3d(0, 0, 0); }       /* arrived (fast) */
+    48%       { transform: translate3d(0, 0, 0); }       /* on station through deploy + retract */
+    60%, 100% { transform: translate3d(-220%, 0, 0); }   /* leaves soon after, rests off-screen left */
   }
 
   /* Phase 2: cable extends as sonar descends */
@@ -721,12 +719,12 @@ import WaterSurface from "./WaterSurface.astro";
     animation: cable-extend 90s linear infinite;
   }
   @keyframes cable-extend {
-    0%, 12%   { transform: scaleY(0); opacity: 0; }
-    13%       { opacity: 1; }
-    25%       { transform: scaleY(1); opacity: 1; }
-    62%       { transform: scaleY(1); opacity: 1; }
-    74%       { opacity: 1; }
-    75%, 100% { transform: scaleY(0); opacity: 0; }
+    0%, 5%    { transform: scaleY(0); opacity: 0; }
+    6%        { opacity: 1; }
+    14%       { transform: scaleY(1); opacity: 1; }
+    40%       { transform: scaleY(1); opacity: 1; }
+    47%       { opacity: 1; }
+    48%, 100% { transform: scaleY(0); opacity: 0; }
   }
 
   /* Phase 3: sonar rig descends along the cable */
@@ -738,12 +736,12 @@ import WaterSurface from "./WaterSurface.astro";
     animation: sonar-descent 90s linear infinite;
   }
   @keyframes sonar-descent {
-    0%, 12%   { transform: translateY(0); opacity: 0; }
-    13%       { opacity: 1; }
-    25%       { transform: translateY(440px); opacity: 1; }
-    62%       { transform: translateY(440px); opacity: 1; }
-    74%       { opacity: 1; }
-    75%, 100% { transform: translateY(0); opacity: 0; }
+    0%, 5%    { transform: translateY(0); opacity: 0; }
+    6%        { opacity: 1; }
+    14%       { transform: translateY(440px); opacity: 1; }
+    40%       { transform: translateY(440px); opacity: 1; }
+    47%       { opacity: 1; }
+    48%, 100% { transform: translateY(0); opacity: 0; }
   }
 
   /* Phase 4: 8 arms deploy radially in lower hemisphere */
@@ -755,10 +753,10 @@ import WaterSurface from "./WaterSurface.astro";
     animation: arm-deploy 90s linear infinite;
   }
   @keyframes arm-deploy {
-    0%, 25%   { transform: rotate(var(--angle, 0deg)) scaleX(0); }
-    32%       { transform: rotate(var(--angle, 0deg)) scaleX(1); }
-    52%       { transform: rotate(var(--angle, 0deg)) scaleX(1); }
-    62%, 100% { transform: rotate(var(--angle, 0deg)) scaleX(0); }
+    0%, 14%   { transform: rotate(var(--angle, 0deg)) scaleX(0); }
+    20%       { transform: rotate(var(--angle, 0deg)) scaleX(1); }
+    34%       { transform: rotate(var(--angle, 0deg)) scaleX(1); }
+    40%, 100% { transform: rotate(var(--angle, 0deg)) scaleX(0); }
   }
 
   /* Phase 5: 3 hydrophone plates drop, hold, retract */
@@ -770,11 +768,11 @@ import WaterSurface from "./WaterSurface.astro";
     animation: plate-drop 90s linear infinite;
   }
   @keyframes plate-drop {
-    0%, 32%   { transform: translateY(0); opacity: 0; }
-    35%       { transform: translateY(0); opacity: 0.75; }
-    42%, 46%  { transform: translateY(18px); opacity: 0.75; }
-    49%       { transform: translateY(0); opacity: 0.75; }
-    52%, 100% { transform: translateY(0); opacity: 0; }
+    0%, 20%   { transform: translateY(0); opacity: 0; }
+    22%       { transform: translateY(0); opacity: 0.75; }
+    24%, 30%  { transform: translateY(18px); opacity: 0.75; }
+    33%       { transform: translateY(0); opacity: 0.75; }
+    34%, 100% { transform: translateY(0); opacity: 0; }
   }
 
   /* ─── Caustics shimmer ─── */

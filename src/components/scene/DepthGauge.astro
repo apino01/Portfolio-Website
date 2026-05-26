@@ -1,0 +1,100 @@
+---
+// Depth gauge — a scroll-linked dive indicator pinned to the right edge.
+// Reinforces the site's depth-descent metaphor and doubles as a scroll
+// orientation cue. Desktop only (lg+); hidden where there's no room.
+// Driven by a --depth-p custom property (0 = surface, 1 = abyssal) set on
+// scroll via rAF-throttled listener. No animation = reduced-motion safe.
+---
+
+<aside class="depth-gauge" aria-hidden="true">
+  <span class="depth-gauge__cap">SURFACE</span>
+  <div class="depth-gauge__track">
+    <div class="depth-gauge__fill"></div>
+    <div class="depth-gauge__marker"></div>
+  </div>
+  <span class="depth-gauge__cap">6000 M</span>
+</aside>
+
+<style>
+  .depth-gauge {
+    position: fixed;
+    right: 1.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    pointer-events: none;
+  }
+  @media (min-width: 1024px) {
+    .depth-gauge { display: flex; }
+  }
+  .depth-gauge__cap {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    color: rgb(56 232 198 / 0.45);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+  .depth-gauge__track {
+    position: relative;
+    width: 2px;
+    height: 38vh;
+    max-height: 360px;
+    border-radius: 2px;
+    background: linear-gradient(
+      to bottom,
+      rgb(56 232 198 / 0.18),
+      rgb(56 232 198 / 0.06)
+    );
+    overflow: visible;
+  }
+  /* Fill grows from the top down to the current depth */
+  .depth-gauge__fill {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: calc(var(--depth-p, 0) * 100%);
+    width: 100%;
+    border-radius: 2px;
+    background: linear-gradient(
+      to bottom,
+      rgb(56 232 198 / 0.7),
+      rgb(56 232 198 / 0.35)
+    );
+    box-shadow: 0 0 6px rgb(56 232 198 / 0.4);
+  }
+  /* Marker rides the leading edge of the fill */
+  .depth-gauge__marker {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--depth-p, 0) * 100%);
+    width: 7px;
+    height: 7px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    background: var(--color-teal, #38e8c6);
+    box-shadow: 0 0 8px rgb(56 232 198 / 0.7);
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  let ticking = false;
+  const update = () => {
+    const max = root.scrollHeight - root.clientHeight;
+    const p = max > 0 ? Math.min(1, Math.max(0, root.scrollTop / max)) : 0;
+    root.style.setProperty("--depth-p", p.toFixed(4));
+    ticking = false;
+  };
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
+  update();
+</script>

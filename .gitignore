@@ -10,3 +10,7 @@ dist/
 
 # Source resume (unscrubbed) — never commit
 Andres Pino Resume - Sr. Mang.pdf
+
+# graphify analysis artifacts
+graphify-out/
+**/graphify-out/

@@ -2,14 +2,18 @@
 import SectionHeading from "~/components/ui/SectionHeading.astro";
 import Tag from "~/components/ui/Tag.astro";
 
-const technical = [
-  "Power Electronics",
+// Top row.
+const technicalDomains = [
+  "System Architecture",
   "Sonar & Acoustics",
   "Undersea Systems & Autonomy",
+  "Hardware Lifecycle",
+];
+// Second row: the rest.
+const technicalDisciplines = [
+  "Power Electronics",
   "Directed Energy / HEL",
   "Systems Engineering",
-  "System Architecture",
-  "Hardware Lifecycle",
 ];
 const leadership = [
   "Technical Leadership",
@@ -31,11 +35,8 @@ const leadership = [
         My work sits at the intersection of undersea systems, sonar, autonomy,
         power electronics, and system integration. I currently lead the Power
         Electronics and System Design group at General Atomics Electromagnetic
-        Systems in San Diego, supporting <a
-          href="/directed-energy/"
-          class="text-light-slate underline decoration-teal/40 underline-offset-2 transition-colors hover:text-teal hover:decoration-teal"
-          >high-energy laser and electro-optical programs</a
-        > for U.S. defense customers.
+        Systems in San Diego, supporting high-energy laser and electro-optical
+        programs for U.S. defense customers.
       </p>
     </div>
 
@@ -63,20 +64,13 @@ const leadership = [
         I advise startups, small businesses, and engineering teams that need
         senior technical judgment on hard hardware problems — system
         architecture, power conversion and distribution, design reviews,
-        integration risk, <a
-          href="/auv-uuv/"
-          class="text-light-slate underline decoration-teal/40 underline-offset-2 transition-colors hover:text-teal hover:decoration-teal"
-          >maritime autonomy</a
-        >, <a
-          href="/sonar/"
-          class="text-light-slate underline decoration-teal/40 underline-offset-2 transition-colors hover:text-teal hover:decoration-teal"
-          >subsea sensing</a
-        >, and battery-powered systems designed for precision, reliability, and
+        integration risk, maritime autonomy, subsea sensing, and
+        battery-powered systems designed for precision, reliability, and
         harsh environments.
       </p>
       <p class="mt-3 text-sm leading-relaxed text-slate/85">
-        M.S. Electrical Engineering, Johns Hopkins (power electronics &amp;
-        analog circuit design) · Active Top Secret clearance.
+        M.S. Electrical Engineering, Johns Hopkins (power electronics, analog
+        circuit design, acoustics) · Active Top Secret clearance.
       </p>
     </div>
   </div>
@@ -88,7 +82,10 @@ const leadership = [
         Technical domains
       </p>
       <ul class="flex flex-wrap gap-2" aria-label="Technical domains">
-        {technical.map((c) => <li><Tag label={c} /></li>)}
+        {technicalDomains.map((c) => <li><Tag label={c} /></li>)}
+        {/* Forced wrap so the three disciplines sit together on the bottom row */}
+        <li class="basis-full" aria-hidden="true"></li>
+        {technicalDisciplines.map((c) => <li><Tag label={c} /></li>)}
       </ul>
     </div>
     <div>

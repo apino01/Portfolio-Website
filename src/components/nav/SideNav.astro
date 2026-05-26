@@ -48,12 +48,12 @@ const { items } = Astro.props;
         const label = link.querySelector<HTMLElement>("[data-section-label]");
         if (isActive) {
           link.setAttribute("aria-current", "true");
-          rule?.classList.add("!w-16", "!bg-near-white");
-          label?.classList.add("text-near-white");
+          rule?.classList.add("!w-16", "!bg-teal");
+          label?.classList.add("!text-teal");
         } else {
           link.removeAttribute("aria-current");
-          rule?.classList.remove("!w-16", "!bg-near-white");
-          label?.classList.remove("text-near-white");
+          rule?.classList.remove("!w-16", "!bg-teal");
+          label?.classList.remove("!text-teal");
         }
       });
     };
