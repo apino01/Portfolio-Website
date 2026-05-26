@@ -704,10 +704,13 @@ import WaterSurface from "./WaterSurface.astro";
     animation: helo-flyby 90s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   }
   @keyframes helo-flyby {
-    0%        { transform: translate3d(220%, 0, 0); }   /* off-screen right */
-    5%        { transform: translate3d(0, 0, 0); }       /* arrived (fast) */
-    48%       { transform: translate3d(0, 0, 0); }       /* on station through deploy + retract */
-    60%, 100% { transform: translate3d(-220%, 0, 0); }   /* leaves soon after, rests off-screen left */
+    /* vw units (not %) so the helicopter fully clears the viewport — % is
+       relative to the element's own 200px width and only moved it ~440px,
+       parking it mid-screen instead of off it. */
+    0%        { transform: translate3d(120vw, 0, 0); }    /* off-screen right */
+    5%        { transform: translate3d(0, 0, 0); }         /* arrived (fast) */
+    48%       { transform: translate3d(0, 0, 0); }         /* on station through deploy + retract */
+    60%, 100% { transform: translate3d(-120vw, 0, 0); }    /* fully off-screen left, stays off until next cycle */
   }
 
   /* Phase 2: cable extends as sonar descends */
