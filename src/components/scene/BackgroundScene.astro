@@ -757,6 +757,11 @@ import WaterSurface from "./WaterSurface.astro";
 
   /* Phase 1: helicopter container flies in/out horizontally */
   .bg-vessel-helo {
+    /* Deployed tether length. --dip is the rig's descent in screen px; the
+       cable rect (height 300) is scaled by --cable-scale to match. Overridden
+       on mobile (see media query) to drop the sonar ~25% deeper. */
+    --dip: 300px;
+    --cable-scale: 1;
     animation: helo-flyby 90s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   }
   @keyframes helo-flyby {
@@ -780,8 +785,8 @@ import WaterSurface from "./WaterSurface.astro";
   @keyframes cable-extend {
     0%, 5%    { transform: scaleY(0); opacity: 0; }
     6%        { opacity: 1; }
-    14%       { transform: scaleY(1); opacity: 1; }
-    40%       { transform: scaleY(1); opacity: 1; }
+    14%       { transform: scaleY(var(--cable-scale, 1)); opacity: 1; }
+    40%       { transform: scaleY(var(--cable-scale, 1)); opacity: 1; }
     47%       { opacity: 1; }
     48%, 100% { transform: scaleY(0); opacity: 0; }
   }
@@ -797,8 +802,8 @@ import WaterSurface from "./WaterSurface.astro";
   @keyframes sonar-descent {
     0%, 5%    { transform: translateY(0); opacity: 0; }
     6%        { opacity: 1; }
-    14%       { transform: translateY(300px); opacity: 1; }
-    40%       { transform: translateY(300px); opacity: 1; }
+    14%       { transform: translateY(var(--dip, 300px)); opacity: 1; }
+    40%       { transform: translateY(var(--dip, 300px)); opacity: 1; }
     47%       { opacity: 1; }
     48%, 100% { transform: translateY(0); opacity: 0; }
   }
@@ -921,8 +926,8 @@ import WaterSurface from "./WaterSurface.astro";
     .bg-torp-arc          { opacity: 0.55; animation: none; }
     /* Helicopter parked on-station with sonar fully deployed for visual interest */
     .bg-vessel-helo       { transform: translate3d(0, 0, 0); }
-    .bg-helo-cable        { transform: scaleY(1); opacity: 1; }
-    .bg-helo-sonar-rig    { transform: translateY(300px); opacity: 1; }
+    .bg-helo-cable        { transform: scaleY(var(--cable-scale, 1)); opacity: 1; }
+    .bg-helo-sonar-rig    { transform: translateY(var(--dip, 300px)); opacity: 1; }
     .bg-helo-plate        { transform: translateY(0); opacity: 0; }
     /* Active sonar frozen mid-ping: one outgoing wavefront + one return */
     .bg-helo-active       { opacity: 1; animation: none; }
@@ -932,5 +937,25 @@ import WaterSurface from "./WaterSurface.astro";
     .bg-ping-out-3        { opacity: 0.2; transform: translateY(75px) scale(8); }
     .bg-echo-in           { animation: none; opacity: 0; }
     .bg-echo-in-1         { opacity: 0.35; transform: translateY(50px) scale(5); }
+  }
+
+  /* ─── Mobile: drop the dipping sonar ~25% deeper (300px → 375px) and place
+     the ship / water surface at the MIDPOINT of the fully deployed tether.
+     Tether top sits ~68px (deck-local) below the deck origin; with the deeper
+     dip the transducer reaches ~378px, so the midpoint is ~223px. The destroyer
+     keeps its same surface-relative offset. Desktop is untouched. Placed at the
+     end of the sheet so these override the base .bg-vessel-helo --dip (equal
+     specificity → source order decides). ─── */
+  @media (max-width: 640px) {
+    .bg-vessel-helo {
+      --dip: 375px;
+      --cable-scale: 1.25;
+    }
+    .surface-deck :global(.water-surface) {
+      top: 223px;
+    }
+    .bg-vessel-ship {
+      top: 165px !important;
+    }
   }
 </style>
