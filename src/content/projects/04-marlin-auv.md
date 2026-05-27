@@ -4,7 +4,7 @@ organization: "Lockheed Martin"
 role: "Lead Electrical Engineer"
 year: "2008 — 2014"
 domain: "Undersea Autonomy"
-externalUrl: "https://www.lockheedmartin.com/en-us/products/marlin.html"
+externalUrl: "https://oceannews.com/featured-stories/april-feature-story-lockheed-martin-corporation/"
 tags: ["AUV", "Sonar Suite", "Power Distribution", "Subsea"]
 featured: true
 order: 6
