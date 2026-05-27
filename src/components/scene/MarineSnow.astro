@@ -44,11 +44,12 @@ const particles = Array.from({ length: COUNT }, (_, i) => ({
     z-index: 1;
   }
   .snow-particle {
-    /* Particles only appear at depth — spawn line is roughly halfway down
-       the viewport, reinforcing that marine snow is an aphotic-zone
-       phenomenon, not a surface one. */
+    /* Particles only appear at depth — spawn line sits just below the
+       surface band / battleship hull (~71vh in the hero view), so marine
+       snow reads as an at-depth phenomenon drifting beneath the ship rather
+       than up near the waterline. */
     position: absolute;
-    top: 50vh;
+    top: 74vh;
     border-radius: 50%;
     background: rgb(203 213 225 / var(--opacity, 0.2));
     animation: snow-drift linear infinite;

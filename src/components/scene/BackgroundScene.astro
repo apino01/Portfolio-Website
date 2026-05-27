@@ -54,17 +54,25 @@ import WaterSurface from "./WaterSurface.astro";
 
   {/* ════════ SURFACE BAND ════════ */}
 
-  {/* Water surface — wavy line marking the air/water transition. The
-     destroyer hull rides it; the helicopter cable passes through it. */}
-  <WaterSurface />
+  {/* Surface deck — ONE shared coordinate frame for every surface element
+     (waterline + destroyer + dipping helicopter). Positioning the three
+     together in fixed deck-local pixels (instead of three independent
+     document-height percentages) guarantees the hull, the waterline, and the
+     dipped transducer stay vertically aligned at any viewport size — the
+     bug was that the cable length was absolute px while the surface sat at a
+     percentage, so on tall mobile pages the dip stopped short of the water. */}
+  <div class="surface-deck">
+    {/* Water surface — wavy line marking the air/water transition. The
+       destroyer hull rides it; the helicopter cable pierces it. */}
+    <WaterSurface />
 
-  {/* Destroyer */}
-  <svg
-    class="bg-vessel bg-vessel-ship absolute"
-    style="top: 6%; left: -12%; width: 520px; height: 90px;"
-    viewBox="0 0 600 100"
-    preserveAspectRatio="xMidYMid meet"
-  >
+    {/* Destroyer — rides the surface line (deck-local top) */}
+    <svg
+      class="bg-vessel bg-vessel-ship absolute"
+      style="top: 92px; left: -12%; width: 520px; height: 90px;"
+      viewBox="0 0 600 100"
+      preserveAspectRatio="xMidYMid meet"
+    >
     <g fill="var(--color-teal, #38e8c6)" opacity="0.20">
       <path d="M 18 56 Q 32 76 80 82 L 480 82 Q 540 82 580 62 L 580 56 Z" />
       <rect x="190" y="36" width="100" height="22" rx="2" />
@@ -81,10 +89,12 @@ import WaterSurface from "./WaterSurface.astro";
     </g>
   </svg>
 
-  {/* Helicopter with full HELRAS deployment choreography */}
+  {/* Helicopter with full HELRAS deployment choreography — hovers HIGH in the
+     sky band, well off to the side of the ship, and dips a long cable that
+     clearly pierces the surface line below it. */}
   <svg
     class="bg-vessel bg-vessel-helo absolute"
-    style="top: 2%; right: 8%; width: 200px; height: 480px;"
+    style="top: -28px; right: 6%; width: 200px; height: 480px;"
     viewBox="0 0 240 580"
     preserveAspectRatio="xMidYMid meet"
   >
@@ -94,7 +104,7 @@ import WaterSurface from "./WaterSurface.astro";
       x="109"
       y="116"
       width="2"
-      height="440"
+      height="300"
       fill="var(--color-teal, #38e8c6)"
       opacity="0.30"
     />
@@ -119,6 +129,33 @@ import WaterSurface from "./WaterSurface.astro";
       <rect class="bg-helo-plate" x="100" y="146" width="5" height="3" rx="1" fill="var(--color-teal, #38e8c6)" />
       <rect class="bg-helo-plate" x="107" y="146" width="6" height="3" rx="1" fill="var(--color-teal, #38e8c6)" />
       <rect class="bg-helo-plate" x="115" y="146" width="5" height="3" rx="1" fill="var(--color-teal, #38e8c6)" />
+
+      {/* ── HELRAS active transmit / return — only visible once the array is
+            deployed and pinging (gated to the active window of the cycle).
+            Solid expanding rings = outgoing omnidirectional ping wavefronts;
+            dashed contracting rings = return echoes collapsing back to the
+            transducer. Centered on the projector (110,150). ── */}
+      {/* Downward-facing semicircular wavefronts (lower hemisphere only),
+          aimed at the seabed. Flat diameter edge sits on the transducer at
+          y=150; the arc bows DOWN (belly toward the seabed, concave back up
+          toward the projector — sweep-flag 0). Outgoing pings travel down and
+          away; return echoes collapse back up after the bottom bounce. A faint
+          filled cone underneath gives the ensonified water volume body.
+          Strokes are non-scaling so the wavefronts stay crisp as they grow. */}
+      <g
+        class="bg-helo-active"
+        fill="none"
+        stroke="var(--color-teal, #38e8c6)"
+      >
+        {/* Ensonified beam cone — faint filled downward fan from the projector */}
+        <path class="bg-helo-cone" d="M 102 150 L 78 250 L 142 250 L 118 150 Z" fill="var(--color-teal, #38e8c6)" stroke="none" opacity="0.07" />
+        <path class="bg-ping-out bg-ping-out-1" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.6" />
+        <path class="bg-ping-out bg-ping-out-2" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.4" />
+        <path class="bg-ping-out bg-ping-out-3" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.3" />
+        <path class="bg-ping-out bg-ping-out-4" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.1" />
+        <path class="bg-echo-in bg-echo-in-1" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.2" stroke-dasharray="3 5" />
+        <path class="bg-echo-in bg-echo-in-2" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1" stroke-dasharray="3 5" />
+      </g>
     </g>
 
     {/* Helicopter airframe — MH-60R Romeo silhouette */}
@@ -182,6 +219,8 @@ import WaterSurface from "./WaterSurface.astro";
       <rect x="104" y="78" width="38" height="22" rx="1" fill="#0a2540" stroke="none" opacity="0.18" />
     </g>
   </svg>
+  </div>
+  {/* ════════ END SURFACE DECK ════════ */}
 
   {/* ════════ UPPER PHOTIC BAND ════════ */}
 
@@ -595,6 +634,24 @@ import WaterSurface from "./WaterSurface.astro";
     opacity: 0.55;
   }
 
+  /* ─── Surface deck — shared coordinate frame for waterline + ship + helo.
+     One absolutely-positioned wrapper; its children use fixed deck-local
+     pixels so the hull, the surface line, and the dipped transducer stay
+     aligned regardless of viewport/document height (fixes the mobile dip
+     stopping above the waterline). ─── */
+  .surface-deck {
+    position: absolute;
+    top: 4%;
+    left: 0;
+    right: 0;
+    height: 400px;
+  }
+  /* Pin the water surface inside the deck (overrides the component's own
+     top:7%) so the waterline sits at a known deck-local y the dip targets. */
+  .surface-deck :global(.water-surface) {
+    top: 150px;
+  }
+
   /* ─── Depth gradient (bottom darkness reduced from 0.72 → 0.65) ─── */
   .bg-depth-gradient {
     background: linear-gradient(
@@ -652,13 +709,24 @@ import WaterSurface from "./WaterSurface.astro";
     100% { opacity: 0; }
   }
 
-  /* ─── Torpedo sonar — faster cadence (terminal-attack ping rate) ─── */
+  /* ─── Torpedo sonar — faster cadence (terminal-attack ping rate) ───
+     The forward swath both pulses (ping cadence) AND steers: the beam sweeps
+     up/down through angles, pivoting at the nose, to read as an electronically
+     beam-steered phased array scanning ahead rather than a fixed cone. */
   .bg-torp-sonar {
-    animation: torp-sonar-pulse 1.1s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: left center;
+    animation:
+      torp-sonar-pulse 1.1s ease-in-out infinite,
+      torp-beam-steer 3.4s ease-in-out infinite;
   }
   @keyframes torp-sonar-pulse {
     0%, 100% { opacity: 0.55; }
     50%      { opacity: 1; }
+  }
+  @keyframes torp-beam-steer {
+    0%, 100% { rotate: -16deg; }
+    50%      { rotate: 16deg; }
   }
 
   .bg-torp-arc {
@@ -741,8 +809,8 @@ import WaterSurface from "./WaterSurface.astro";
   @keyframes sonar-descent {
     0%, 5%    { transform: translateY(0); opacity: 0; }
     6%        { opacity: 1; }
-    14%       { transform: translateY(440px); opacity: 1; }
-    40%       { transform: translateY(440px); opacity: 1; }
+    14%       { transform: translateY(300px); opacity: 1; }
+    40%       { transform: translateY(300px); opacity: 1; }
     47%       { opacity: 1; }
     48%, 100% { transform: translateY(0); opacity: 0; }
   }
@@ -776,6 +844,71 @@ import WaterSurface from "./WaterSurface.astro";
     24%, 30%  { transform: translateY(18px); opacity: 0.75; }
     33%       { transform: translateY(0); opacity: 0.75; }
     34%, 100% { transform: translateY(0); opacity: 0; }
+  }
+
+  /* ─── HELRAS active transmit / return wavefronts ───
+     A 90s "gate" reveals the whole group only while the array is deployed
+     and pinging (~16–40% of the cycle); inside, each ring runs its own fast
+     ~2.4s loop so the ping cadence reads as continuous active operation. */
+  .bg-helo-active {
+    opacity: 0;
+    animation: helo-active-gate 90s linear infinite;
+  }
+  @keyframes helo-active-gate {
+    0%, 15%   { opacity: 0; }
+    18%       { opacity: 1; }
+    38%       { opacity: 1; }
+    41%, 100% { opacity: 0; }
+  }
+
+  /* Outgoing ping — semicircular wavefronts expand DOWNWARD from the
+     projector toward the seabed. Anchored at the flat top edge (the
+     transducer) so they grow downward/outward, not from their own centre. */
+  .bg-ping-out {
+    transform-box: fill-box;
+    transform-origin: center top;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    animation: helo-ping-out 2.6s ease-out infinite;
+  }
+  .bg-ping-out-1 { animation-delay: 0s; }
+  .bg-ping-out-2 { animation-delay: 0.65s; }
+  .bg-ping-out-3 { animation-delay: 1.3s; }
+  .bg-ping-out-4 { animation-delay: 1.95s; }
+  @keyframes helo-ping-out {
+    0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+    12%  { opacity: 0.9; }
+    100% { transform: translateY(98px) scale(11); opacity: 0; }
+  }
+
+  /* Ensonified cone — gently breathes while the array is active */
+  .bg-helo-cone {
+    transform-box: fill-box;
+    transform-origin: center top;
+    animation: helo-cone-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes helo-cone-pulse {
+    0%, 100% { opacity: 0.04; }
+    50%      { opacity: 0.09; }
+  }
+
+  /* Return echo — semicircular wavefronts collapse back UP to the transducer,
+     delayed so they read as the reflection returning after bouncing off the
+     bottom. Same downward arc, anchored at the same top edge. */
+  .bg-echo-in {
+    transform-box: fill-box;
+    transform-origin: center top;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    animation: helo-echo-in 2.6s ease-in infinite;
+  }
+  .bg-echo-in-1 { animation-delay: 1.3s; }
+  .bg-echo-in-2 { animation-delay: 2.0s; }
+  @keyframes helo-echo-in {
+    0%   { transform: translateY(90px) scale(9); opacity: 0; }
+    35%  { opacity: 0; }
+    55%  { opacity: 0.5; }
+    100% { transform: translateY(0) scale(0.8); opacity: 0; }
   }
 
   /* ─── Caustics shimmer ─── */
@@ -817,8 +950,16 @@ import WaterSurface from "./WaterSurface.astro";
     /* Helicopter parked on-station with sonar fully deployed for visual interest */
     .bg-vessel-helo       { transform: translate3d(0, 0, 0); }
     .bg-helo-cable        { transform: scaleY(1); opacity: 1; }
-    .bg-helo-sonar-rig    { transform: translateY(440px); opacity: 1; }
+    .bg-helo-sonar-rig    { transform: translateY(300px); opacity: 1; }
     .bg-helo-arm          { transform: rotate(var(--angle, 0deg)) scaleX(1); }
     .bg-helo-plate        { transform: translateY(0); opacity: 0; }
+    /* Active sonar frozen mid-ping: one outgoing wavefront + one return */
+    .bg-helo-active       { opacity: 1; animation: none; }
+    .bg-helo-cone         { animation: none; opacity: 0.06; }
+    .bg-ping-out          { animation: none; opacity: 0; }
+    .bg-ping-out-2        { opacity: 0.5; transform: translateY(35px) scale(4); }
+    .bg-ping-out-3        { opacity: 0.2; transform: translateY(75px) scale(8); }
+    .bg-echo-in           { animation: none; opacity: 0; }
+    .bg-echo-in-1         { opacity: 0.35; transform: translateY(50px) scale(5); }
   }
 </style>
