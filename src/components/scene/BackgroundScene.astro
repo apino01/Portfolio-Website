@@ -118,32 +118,10 @@ import WaterSurface from "./WaterSurface.astro";
       <rect class="bg-helo-plate" x="107" y="146" width="6" height="3" rx="1" fill="var(--color-teal, #38e8c6)" />
       <rect class="bg-helo-plate" x="115" y="146" width="5" height="3" rx="1" fill="var(--color-teal, #38e8c6)" />
 
-      {/* ── HELRAS active transmit / return — only visible once the array is
-            deployed and pinging (gated to the active window of the cycle).
-            Solid expanding rings = outgoing omnidirectional ping wavefronts;
-            dashed contracting rings = return echoes collapsing back to the
-            transducer. Centered on the projector (110,150). ── */}
-      {/* Downward-facing semicircular wavefronts (lower hemisphere only),
-          aimed at the seabed. Flat diameter edge sits on the transducer at
-          y=150; the arc bows DOWN (belly toward the seabed, concave back up
-          toward the projector — sweep-flag 0). Outgoing pings travel down and
-          away; return echoes collapse back up after the bottom bounce. A faint
-          filled cone underneath gives the ensonified water volume body.
-          Strokes are non-scaling so the wavefronts stay crisp as they grow. */}
-      <g
-        class="bg-helo-active"
-        fill="none"
-        stroke="var(--color-teal, #38e8c6)"
-      >
-        {/* Ensonified beam cone — faint filled downward fan from the projector */}
-        <path class="bg-helo-cone" d="M 102 150 L 78 250 L 142 250 L 118 150 Z" fill="var(--color-teal, #38e8c6)" stroke="none" opacity="0.07" />
-        <path class="bg-ping-out bg-ping-out-1" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.6" />
-        <path class="bg-ping-out bg-ping-out-2" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.4" />
-        <path class="bg-ping-out bg-ping-out-3" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.3" />
-        <path class="bg-ping-out bg-ping-out-4" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.1" />
-        <path class="bg-echo-in bg-echo-in-1" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.2" stroke-dasharray="3 5" />
-        <path class="bg-echo-in bg-echo-in-2" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1" stroke-dasharray="3 5" />
-      </g>
+      {/* NB: the active acoustic wavefronts are rendered in a separate
+          .helras-wave-layer below (a sibling of .background-scene) so they can
+          sit ABOVE the page content and stay visible over the About section
+          instead of being trapped behind it in the scene's stacking context. */}
     </g>
 
     {/* Helicopter airframe — MH-60R Romeo silhouette */}
@@ -610,6 +588,35 @@ import WaterSurface from "./WaterSurface.astro";
   </svg>
 </div>
 
+{/* ── HELRAS active acoustic wavefronts — rendered as a sibling of the scene
+    so it can sit ABOVE the page content (the scene itself is trapped below
+    content by its own opacity stacking context). Mirrors the helicopter SVG's
+    position/geometry exactly, then statically drops the wave group to the
+    deployed transducer depth (translateY --dip). mix-blend-mode:screen makes
+    the teal glow over the dark background while leaving the light body text
+    essentially untouched; pointer-events:none keeps it non-interactive. The
+    helo-active-gate keeps it visible only during the on-station ping window. */}
+<div class="helras-wave-layer" aria-hidden="true">
+  <svg
+    class="helras-wave-svg"
+    viewBox="0 0 240 580"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <g class="helras-wave-deployed">
+      <g class="bg-helo-active" fill="none" stroke="var(--color-teal, #38e8c6)">
+        {/* Ensonified beam cone — faint filled downward fan from the projector */}
+        <path class="bg-helo-cone" d="M 102 150 L 78 250 L 142 250 L 118 150 Z" fill="var(--color-teal, #38e8c6)" stroke="none" opacity="0.07" />
+        <path class="bg-ping-out bg-ping-out-1" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.6" />
+        <path class="bg-ping-out bg-ping-out-2" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.4" />
+        <path class="bg-ping-out bg-ping-out-3" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.3" />
+        <path class="bg-ping-out bg-ping-out-4" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.1" />
+        <path class="bg-echo-in bg-echo-in-1" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1.2" stroke-dasharray="3 5" />
+        <path class="bg-echo-in bg-echo-in-2" d="M 106 150 A 4 4 0 0 0 114 150" stroke-width="1" stroke-dasharray="3 5" />
+      </g>
+    </g>
+  </svg>
+</div>
+
 <style>
   :global(body) {
     position: relative;
@@ -638,6 +645,38 @@ import WaterSurface from "./WaterSurface.astro";
      top:7%) so the waterline sits at a known deck-local y the dip targets. */
   .surface-deck :global(.water-surface) {
     top: 150px;
+  }
+
+  /* ─── HELRAS wave overlay — mirrors the deck + helicopter positioning but
+     lives ABOVE the page content so the active wavefronts read over the
+     About-section background. screen blend = teal glows on the dark field,
+     light text stays legible; pointer-events:none keeps it inert. ─── */
+  .helras-wave-layer {
+    --dip: 300px;
+    position: absolute;
+    top: 4%;
+    left: 0;
+    right: 0;
+    height: 400px;
+    z-index: 11; /* just above main (z-10) */
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.9;
+  }
+  .helras-wave-svg {
+    position: absolute;
+    top: -28px;
+    right: 6%;
+    width: 200px;
+    height: 480px;
+    overflow: visible;
+  }
+  /* Statically drop the wave group to the deployed transducer depth (the
+     in-scene rig descends to the same translateY(--dip)). */
+  .helras-wave-deployed {
+    transform-box: fill-box;
+    transform-origin: top center;
+    transform: translateY(var(--dip, 300px));
   }
 
   /* ─── Depth gradient (bottom darkness reduced from 0.72 → 0.65) ─── */
@@ -950,6 +989,10 @@ import WaterSurface from "./WaterSurface.astro";
     .bg-vessel-helo {
       --dip: 375px;
       --cable-scale: 1.25;
+    }
+    /* keep the overlay waves at the same deepened transducer depth */
+    .helras-wave-layer {
+      --dip: 375px;
     }
     .surface-deck :global(.water-surface) {
       top: 223px;
