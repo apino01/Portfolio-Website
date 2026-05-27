@@ -74,4 +74,13 @@ const particles = Array.from({ length: COUNT }, (_, i) => ({
   @media (prefers-reduced-motion: reduce) {
     .snow-particle { animation: none; opacity: 0.12; }
   }
+
+  /* Phones: thin the particulate to roughly half. display:none halts the
+     animation/paint entirely for hidden particles, cutting the continuous
+     compositing load on low-power devices without changing the look much. */
+  @media (max-width: 640px) {
+    .snow-particle:nth-child(n + 15) {
+      display: none;
+    }
+  }
 </style>

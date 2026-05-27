@@ -113,6 +113,14 @@
       transition-duration: 0.01ms !important;
     }
   }
+
+  /* Phones: drop fixed background attachment. iOS rasterizes fixed-attachment
+     gradients into a large off-screen layer and repaints on scroll — a classic
+     mobile scroll-jank source. Scroll attachment maps the depth gradient to the
+     document height (still spans the full page), so the descent metaphor holds. */
+  @media (max-width: 640px) {
+    html, body { background-attachment: scroll; }
+  }
 }
 
 @utility section-marker {
