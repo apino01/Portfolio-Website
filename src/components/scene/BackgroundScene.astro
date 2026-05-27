@@ -14,9 +14,7 @@ import WaterSurface from "./WaterSurface.astro";
 // Helicopter sequence (90s loop) — fast deploy, quick exit:
 //   0–5%    fly in from right
 //   5–14%   lower sonar package on cable (fast)
-//   14–20%  8 arms deploy radially in lower hemisphere
-//   20–30%  3 hydrophone plates drop + ping
-//   30–40%  plates retract, arms close
+//   16–40%  active pinging — downward acoustic wavefronts + returns
 //   40–48%  raise sonar back to helicopter
 //   48–60%  fly off to the left
 //   60–100% off-station (rest)
@@ -111,16 +109,6 @@ import WaterSurface from "./WaterSurface.astro";
 
     {/* Sonar rig group — translates Y to descend along the cable */}
     <g class="bg-helo-sonar-rig">
-      {/* Arms — drawn first (under body so deployment looks like they emerge from beneath) */}
-      <rect class="bg-helo-arm" style="--angle: 20deg"  x="110" y="147" width="25" height="2" rx="1" fill="var(--color-teal, #38e8c6)" />
-      <rect class="bg-helo-arm" style="--angle: 40deg"  x="110" y="147" width="25" height="2" rx="1" fill="var(--color-teal, #38e8c6)" />
-      <rect class="bg-helo-arm" style="--angle: 60deg"  x="110" y="147" width="25" height="2" rx="1" fill="var(--color-teal, #38e8c6)" />
-      <rect class="bg-helo-arm" style="--angle: 80deg"  x="110" y="147" width="25" height="2" rx="1" fill="var(--color-teal, #38e8c6)" />
-      <rect class="bg-helo-arm" style="--angle: 100deg" x="110" y="147" width="25" height="2" rx="1" fill="var(--color-teal, #38e8c6)" />
-      <rect class="bg-helo-arm" style="--angle: 120deg" x="110" y="147" width="25" height="2" rx="1" fill="var(--color-teal, #38e8c6)" />
-      <rect class="bg-helo-arm" style="--angle: 140deg" x="110" y="147" width="25" height="2" rx="1" fill="var(--color-teal, #38e8c6)" />
-      <rect class="bg-helo-arm" style="--angle: 160deg" x="110" y="147" width="25" height="2" rx="1" fill="var(--color-teal, #38e8c6)" />
-
       {/* Sonar body cylinder */}
       <rect x="98" y="116" width="24" height="32" rx="3" fill="var(--color-teal, #38e8c6)" opacity="0.34" />
       <ellipse cx="110" cy="148" rx="14" ry="2.5" fill="var(--color-teal, #38e8c6)" opacity="0.50" />
@@ -815,21 +803,6 @@ import WaterSurface from "./WaterSurface.astro";
     48%, 100% { transform: translateY(0); opacity: 0; }
   }
 
-  /* Phase 4: 8 arms deploy radially in lower hemisphere */
-  .bg-helo-arm {
-    transform-box: fill-box;
-    transform-origin: left center;
-    transform: rotate(var(--angle, 0deg)) scaleX(0);
-    opacity: 0.50;
-    animation: arm-deploy 90s linear infinite;
-  }
-  @keyframes arm-deploy {
-    0%, 14%   { transform: rotate(var(--angle, 0deg)) scaleX(0); }
-    20%       { transform: rotate(var(--angle, 0deg)) scaleX(1); }
-    34%       { transform: rotate(var(--angle, 0deg)) scaleX(1); }
-    40%, 100% { transform: rotate(var(--angle, 0deg)) scaleX(0); }
-  }
-
   /* Phase 5: 3 hydrophone plates drop, hold, retract */
   .bg-helo-plate {
     transform-box: fill-box;
@@ -927,7 +900,6 @@ import WaterSurface from "./WaterSurface.astro";
     .bg-caustics,
     .bg-helo-cable,
     .bg-helo-sonar-rig,
-    .bg-helo-arm,
     .bg-helo-plate {
       animation: none;
     }
@@ -951,7 +923,6 @@ import WaterSurface from "./WaterSurface.astro";
     .bg-vessel-helo       { transform: translate3d(0, 0, 0); }
     .bg-helo-cable        { transform: scaleY(1); opacity: 1; }
     .bg-helo-sonar-rig    { transform: translateY(300px); opacity: 1; }
-    .bg-helo-arm          { transform: rotate(var(--angle, 0deg)) scaleX(1); }
     .bg-helo-plate        { transform: translateY(0); opacity: 0; }
     /* Active sonar frozen mid-ping: one outgoing wavefront + one return */
     .bg-helo-active       { opacity: 1; animation: none; }
