@@ -1,6 +1,6 @@
 # Session Handoff — andrespino.com portfolio
 
-**Last updated:** 2026-05-27 session end · **Branch:** `main` @ `1ab3d04` (clean, pushed)
+**Last updated:** 2026-05-29 session end · **Branch:** `main` @ `61efdec` (pushed) **+ 7 files of UNCOMMITTED design-enhancement work** (see §2d). Read §2d first.
 
 ---
 
@@ -43,6 +43,40 @@ Focused on the ambient surface scene (helicopter dipping sonar) and mobile polis
 - `.helras-wave-layer` is a **duplicate of the wave group** rendered above content; the in-scene rig still carries the transducer body/tether (below content). They stay in sync via the shared 90s gate + matching `--dip`.
 - Helicopter cycle comment (top of `BackgroundScene.astro`) documents the 90s choreography.
 - **Open/possible follow-ups:** AUV (bottom-UUV) *downward* seabed beam still only pulses (no beam-steering) — Andrés declined adding it this session. Animation-load review flagged ~80 concurrent animated nodes; snow reduction on mobile was the main mitigation taken.
+
+## 2c. Content edits (2026-05-12, commits `d6d1195`, `61efdec` — PUSHED/LIVE)
+
+Small copy/link fixes after the surface-scene session, both pushed to prod:
+- `d6d1195` — Marlin AUV `externalUrl` → `https://oceannews.com/featured-stories/april-feature-story-lockheed-martin-corporation/` (in `src/content/projects/04-marlin-auv.md`). Hero intro reworded to "guiding teams through the full development lifecycle…".
+- `61efdec` — Hero intro: "maritime and defense **hardware**" → "**systems**".
+- About section's own "20 years" line is *different* copy (pairing judgment with modern tooling) — intentionally NOT synced to the hero. Leave it.
+
+## 2d. Design-enhancement session (2026-05-29) — ⚠️ UNCOMMITTED, on localhost only
+
+Ran a 3-framework design audit (`emil-design-eng` + `design-taste-frontend` + `impeccable`) of the live site, then prototyped 8 theme-aligned engagement enhancements. **All 7 modified files are UNCOMMITTED** in the working tree. Verified at desktop 1440px AND mobile 390px, 0 console errors, every animation has a `prefers-reduced-motion` fallback. NOT yet reviewed/approved by Andrés, NOT pushed.
+
+**Audit verdict:** site is NOT AI-slop (committed navy+teal palette, Chakra Petch display, bespoke subsea scene clear both category-reflex tiers). Nielsen ~27/36 (n/a Help excluded), "Good". The one real AI-tell found was the decorative "ACOUSTIC RETURN · 4.3 KHZ" hero strip → fixed (#1 below).
+
+**The 8 changes (file → what):**
+1. **`Hero.astro`** — killed the decorative "ACOUSTIC RETURN" strip; replaced with rotating **"Currently active on: {engagement}"** live signal. Edit the `currentlyActive` array when commitments change; rotates client-side, 6s dwell + ~320ms crossfade, `aria-live="polite"`. Current 3 entries: `"Gen 3 High Energy Laser · GA-EMS"`, `"Long-Endurance AUV · Terradepth"`, `"MK54 SONAR · L3Harris"` — ⚠️ confirm with Andrés these are accurate to claim publicly before pushing.
+2. **`global.css`** — global button **`:active` press feedback** (`scale(0.97)`, 140ms) on `a, button, [role=button], summary`. Emil's first-order detail.
+3. **`ProjectCard.astro`** — **sonar-return reveal**: on view-enter the accent bar pings + an expanding arc (`.card-ping`) sweeps across; card resolves behind it. Replaces the old plain fade-up.
+4. **`ProjectCard.astro`** — **hover lock-on**: reticle corners scale-in from their own corner, `.card-scan` hairline sweeps top→bottom, accent bar glows. Reads "target acquired."
+5. **`SideNav.astro`** — **depth ladder**: each nav item shows a depth marker (About=Surface, Experience=2000 m, Projects=4000 m, Contact=6000 m); active item's rule + depth → teal via the existing IntersectionObserver scroll-spy. Desktop only (`hidden lg:block`).
+6. **`SectionHeading.astro` + `global.css`** — **bathymetric line-draw**: 3 layered contour `[data-bathy-path]` SVGs draw themselves (stroke-dashoffset 1200→0, staggered 900/1100/1300ms) when the heading's `.is-visible` toggles on view-enter. Desktop contour; mobile shows inline depth tag.
+7. **`DepthGauge.astro`** — **live numeric depth readout** riding the marker (e.g. "3,560 M"), interpolated from scroll progress (`--depth-p` × 6000, rounded to nearest 10 m to avoid jitter). NOTE: my original audit said "counter tween" but the gauge fill was already continuous/smooth with no jumping digit — so the real win was adding a numeric readout, not a tween. Desktop only.
+8. **`ContactSection.astro`** — **form submit choreography** (themed): button label morphs "Send message" → **"Pinging…"** (with a looping `.contact-submit__pulse` sonar ring) → **"Contact established"** (settle glow) on success, or **"Signal lost — email me directly"** on error. Status line copy themed to match. The underlying fetch→Formspree handler already existed; this layers theme + states on top.
+- *Bonus already present from a parallel session:* headshot ambient caustic drift (`.headshot-ping::before` in `global.css`, 14s diagonal teal gradient, reduced-motion off).
+
+**DEFERRED (flagged to Andrés, NOT built):** #10 canvas sonar-waterfall on `/sonar` (perf risk), #11 cursor depth-readout (AI-tell risk). Both need their own pass if wanted.
+
+**Mechanics for future edits:** all the new wave/beam/reveal motion is shared CSS; reduced-motion blocks pair every animation. The card reveal + heading line-draw both ride view-enter IntersectionObservers (`is-visible` class), so they only fire when scrolled into view (do NOT gate base visibility on them — content is visible by default, motion enhances).
+
+**Untracked tooling artifacts** (from the `impeccable` skill setup, NOT site code): `PRODUCT.md` and `.impeccable/` dir at repo root. Decide whether to commit (project context doc) or gitignore them. They do not affect the build.
+
+**Two dev servers were left running this session:** `4321` (desktop) + `4323` (mobile, started via `npx astro dev --port 4323`). Both may be dead by next session — restart as needed. NB: Astro auto-increments the port if one is taken (saw `4322` mid-session), so confirm the actual port from the dev-server output before pointing a browser at it.
+
+**Resume options for next chat:** (a) Andrés reviews the 8 enhancements on localhost → commit + push (one commit, triggers Cloudflare deploy); (b) iterate on any of the 8; (c) build deferred #10/#11; (d) revert all via `git checkout -- src/`.
 
 ## 3. Work accomplished (earlier session, commit-by-commit)
 
@@ -138,6 +172,8 @@ Focused on the ambient surface scene (helicopter dipping sonar) and mobile polis
 - **Hero "How I work" block** advertises daily AI tooling: Claude Code, Cowork, Claude, ChatGPT Codex.
 - **graphify** was run on `src/` → outputs in `graphify-out/` (gitignored). Found a notable echo: `BathymetryFooter` and `SectionHeading` both reimplement the bathymetric-contour SVG. **Verdict: do NOT extract a shared component** — it's incidental (thematic) duplication, not true duplication; they have opposite opacity gradients, different scale/role, and no shared reason to change. Leaving separate is correct.
 - **Reusable kickoff prompt** for Andrés's brother's coaching/interview-prep site was generated (bakes in the wins, engineers out this project's time-wasters: self-host fonts from day 1, use Service schema, mobile-first, minimal animation budget, gather real content before building). Not saved to a file — re-generate if needed.
+- **Generic shareable kickoff prompt** (2026-05-29) — a phased "build a senior-professional advisory portfolio" prompt Andrés can hand to anyone. 6 phases (Discovery→Direction→Structure→Build→signature theme element→SEO/launch) + anti-slop rules. Output to chat only, NOT saved to a file. Re-generate on request; offer to save as `.md` in repo if he wants it kept.
+- **3-framework design audit** (`emil-design-eng`, `design-taste-frontend`, `impeccable`) was run this session — full verdict + Nielsen table in §2d. The `impeccable` skill wanted a `PRODUCT.md` scaffold (init flow); skipped it, used the skills as critique frameworks directly. The untracked `PRODUCT.md` / `.impeccable/` at repo root are leftovers from that (see §2d).
 - **Program names are public-OK** (MK54, HELRAS, HELIOS, LWWAA, RAPVLA, etc.). NEVER characterize classification status of any program.
 - **CRLF warnings** on every commit are harmless (LF→CRLF line-ending normalization).
 
@@ -145,7 +181,8 @@ Focused on the ambient surface scene (helicopter dipping sonar) and mobile polis
 
 ## 11. How to resume
 
-1. `cd "C:\Users\Andres\My Drive\Documents\Claude\portfolio"` · `git status` (should be clean) · `npm run dev`
-2. Working tree is clean and synced to `origin/main` @ `39b44f1`.
-3. Default workflow: make changes → review on localhost:4321 → commit/push when Andrés approves.
+1. `cd "C:\Users\Andres\My Drive\Documents\Claude\portfolio"` · `git status` · `npm run dev`
+2. ⚠️ Working tree is **NOT clean** — 7 modified files = uncommitted design enhancements (see §2d). Last pushed commit `61efdec`; branch otherwise synced to `origin/main`. Untracked: `PRODUCT.md`, `.impeccable/` (tooling, see §2d).
+3. Default workflow: make changes → review on localhost:4321 → commit/push when Andrés approves (push to `main` = Cloudflare prod deploy, ~1–2 min).
 4. Memory files exist: `user_andres_pino.md` (profile) and `project_portfolio_site.md` (project) — already loaded via auto-memory.
+5. First action next chat: ask Andrés whether to commit/push the §2d enhancements, iterate, or revert.
