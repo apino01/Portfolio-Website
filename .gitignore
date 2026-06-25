@@ -18,3 +18,9 @@ graphify-out/
 # impeccable design-audit tooling artifacts (local only, not site code)
 .impeccable/
 PRODUCT.md
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
