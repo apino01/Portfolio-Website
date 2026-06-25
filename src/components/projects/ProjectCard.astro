@@ -32,14 +32,21 @@ const accent = (domain && domainAccent[domain]) || "#38e8c6";
 ---
 
 <article
-  class="project-card group relative grid gap-4 rounded-md border border-transparent p-4 pl-5 transition-colors hover:border-teal/20 hover:bg-deep-navy/40 sm:p-6 sm:pl-7"
+  class="project-card group relative grid gap-4 overflow-hidden rounded-md border border-transparent p-4 pl-5 transition-colors hover:border-teal/25 hover:bg-deep-navy/40 sm:p-6 sm:pl-7"
   style={`--accent: ${accent}; --reveal-delay: ${index * 80}ms;`}
   data-project-card
 >
-  {/* Domain accent bar — left edge, brightens + extends on hover */}
+  {/* Domain accent bar — left edge, brightens + extends on hover, pings on enter */}
   <span class="project-card__accent" aria-hidden="true"></span>
 
-  {/* Targeting-reticle corner ticks — fade in on hover */}
+  {/* Sonar return arc — emanates from the accent bar on view-enter,
+      single ping. Implements the "card returns" reveal metaphor. */}
+  <span class="card-ping" aria-hidden="true"></span>
+
+  {/* Lock-on scan-line — sweeps top to bottom across the card on hover */}
+  <span class="card-scan" aria-hidden="true"></span>
+
+  {/* Targeting-reticle corner ticks — fade + scale in on hover (lock-on) */}
   <span class="reticle reticle--tl" aria-hidden="true"></span>
   <span class="reticle reticle--br" aria-hidden="true"></span>
 
@@ -100,12 +107,14 @@ const accent = (domain && domainAccent[domain]) || "#38e8c6";
 </article>
 
 <style>
+  /* Reveal: card resolves with a slight rise + the accent bar emits a single
+     sonar arc that sweeps rightward across the card. The card IS the return. */
   .project-card {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(8px);
     transition:
-      opacity 600ms ease-out,
-      transform 600ms ease-out,
+      opacity 500ms cubic-bezier(0.23, 1, 0.32, 1),
+      transform 500ms cubic-bezier(0.23, 1, 0.32, 1),
       border-color 200ms ease,
       background-color 200ms ease;
     transition-delay: var(--reveal-delay, 0ms);
@@ -119,6 +128,7 @@ const accent = (domain && domainAccent[domain]) || "#38e8c6";
     color: color-mix(in srgb, var(--accent) 80%, white);
   }
 
+  /* Accent bar — pings once on reveal, brightens + extends on hover. */
   .project-card__accent {
     position: absolute;
     left: 0;
@@ -131,36 +141,108 @@ const accent = (domain && domainAccent[domain]) || "#38e8c6";
     transition:
       opacity 250ms ease,
       top 250ms ease,
-      bottom 250ms ease;
+      bottom 250ms ease,
+      box-shadow 250ms ease;
+  }
+  .project-card.is-visible .project-card__accent {
+    animation: accent-ping 900ms cubic-bezier(0.23, 1, 0.32, 1);
+    animation-delay: calc(var(--reveal-delay, 0ms) + 120ms);
+    animation-fill-mode: backwards;
+  }
+  @keyframes accent-ping {
+    0%   { box-shadow: 0 0 0 0 rgb(56 232 198 / 0); }
+    25%  { box-shadow: 0 0 16px 1px color-mix(in srgb, var(--accent) 70%, transparent); }
+    100% { box-shadow: 0 0 0 0 rgb(56 232 198 / 0); }
   }
   .project-card:hover .project-card__accent {
-    opacity: 0.9;
+    opacity: 0.95;
     top: 6%;
     bottom: 6%;
+    box-shadow: 0 0 12px 0 color-mix(in srgb, var(--accent) 45%, transparent);
   }
 
+  /* Sonar return arc on reveal — expanding ellipse from the accent bar
+     sweeping rightward across the card. Single pulse. */
+  .card-ping {
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .project-card.is-visible .card-ping {
+    animation: card-ping 1100ms cubic-bezier(0.23, 1, 0.32, 1);
+    animation-delay: calc(var(--reveal-delay, 0ms) + 80ms);
+    animation-fill-mode: backwards;
+  }
+  @keyframes card-ping {
+    0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+    15%  { opacity: 0.7; }
+    100% { transform: translate(-50%, -50%) scale(28); opacity: 0; }
+  }
+
+  /* Lock-on scan-line — a thin teal hairline sweeps top→bottom across the
+     card on hover, like a targeting raster. Once per hover entry. */
+  .card-scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in srgb, var(--accent) 75%, transparent) 20%,
+      color-mix(in srgb, var(--accent) 90%, transparent) 50%,
+      color-mix(in srgb, var(--accent) 75%, transparent) 80%,
+      transparent
+    );
+    opacity: 0;
+    transform: translateY(0);
+    pointer-events: none;
+  }
+  .project-card:hover .card-scan {
+    animation: card-scan 700ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  @keyframes card-scan {
+    0%   { opacity: 0; transform: translateY(0); }
+    20%  { opacity: 0.55; }
+    100% { opacity: 0; transform: translateY(100%); }
+  }
+
+  /* Reticle corners — fade + scale in on hover, anchored at their own
+     corner. Reads as "lock acquired" rather than a passive frame. */
   .reticle {
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border: 1px solid var(--accent);
     opacity: 0;
-    transition: opacity 250ms ease;
+    transform: scale(0.7);
+    transition: opacity 220ms ease, transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   .reticle--tl {
     top: 8px;
     left: 8px;
     border-right: 0;
     border-bottom: 0;
+    transform-origin: top left;
   }
   .reticle--br {
     bottom: 8px;
     right: 8px;
     border-left: 0;
     border-top: 0;
+    transform-origin: bottom right;
   }
   .project-card:hover .reticle {
-    opacity: 0.6;
+    opacity: 0.85;
+    transform: scale(1);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -171,10 +253,11 @@ const accent = (domain && domainAccent[domain]) || "#38e8c6";
         border-color 200ms ease,
         background-color 200ms ease;
     }
-    .project-card__accent,
-    .reticle {
-      transition: none;
-    }
+    .project-card.is-visible .project-card__accent,
+    .project-card.is-visible .card-ping,
+    .project-card:hover .card-scan { animation: none; }
+    .card-ping { opacity: 0; }
+    .reticle { transition: opacity 200ms ease; transform: scale(1); }
   }
 </style>
 

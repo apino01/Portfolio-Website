@@ -44,22 +44,28 @@ const { title, number, depth } = Astro.props;
         class="h-full w-full overflow-visible"
       >
         <path
+          data-bathy-path
           d="M0 6 Q 50 2 100 6 T 200 6 T 300 6 T 400 6 T 500 6 T 600 6"
           fill="none"
           stroke="rgb(56 232 198 / 0.45)"
           stroke-width="0.6"
+          vector-effect="non-scaling-stroke"
         />
         <path
+          data-bathy-path
           d="M0 9 Q 60 5 120 9 T 240 9 T 360 9 T 480 9 T 600 9"
           fill="none"
           stroke="rgb(56 232 198 / 0.22)"
           stroke-width="0.5"
+          vector-effect="non-scaling-stroke"
         />
         <path
+          data-bathy-path
           d="M0 12 Q 70 8 140 12 T 280 12 T 420 12 T 600 12"
           fill="none"
           stroke="rgb(56 232 198 / 0.10)"
           stroke-width="0.5"
+          vector-effect="non-scaling-stroke"
         />
       </svg>
       {

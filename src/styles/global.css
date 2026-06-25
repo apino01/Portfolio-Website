@@ -44,6 +44,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Depth-of-water gradient — surface (lighter) at top, abyssal at bottom.
@@ -66,6 +67,7 @@
   }
 
   body {
+    overflow-x: clip;
     background:
       radial-gradient(ellipse 100% 60% at 80% 0%, rgb(56 232 198 / 0.05), transparent 60%),
       radial-gradient(ellipse 80% 50% at 0% 100%, rgb(15 50 87 / 0.35), transparent 60%);
@@ -207,4 +209,78 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-stagger > * { opacity: 1; animation: none; }
   .headshot-ping::after { animation: none; }
+}
+
+/* ── Global press-state feedback. Every pressable thing depresses ~3% on
+   :active over 140ms. Emil's first-order detail: the UI should answer the
+   touch the moment the user presses, not on release. Scoped tightly to
+   avoid hijacking form inputs / textareas. ── */
+a, button, [role="button"], summary {
+  transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+a:active, button:active, [role="button"]:active, summary:active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  a, button, [role="button"], summary { transition: none; }
+  a:active, button:active, [role="button"]:active, summary:active { transform: none; }
+}
+
+/* ── Bathymetric section-heading underline. The contour line draws itself
+   in left-to-right when the heading enters view, instead of appearing
+   pre-rendered. Stroke is non-scaling; dash-offset animates from full
+   length to zero. Three layered paths stagger for a depth-chart feel. ── */
+.section-heading [data-bathy-path] {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  transition: stroke-dashoffset 900ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.section-heading.is-visible [data-bathy-path] {
+  stroke-dashoffset: 0;
+}
+.section-heading [data-bathy-path]:nth-of-type(2) {
+  transition-delay: 90ms;
+  transition-duration: 1100ms;
+}
+.section-heading [data-bathy-path]:nth-of-type(3) {
+  transition-delay: 180ms;
+  transition-duration: 1300ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-heading [data-bathy-path] {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+}
+
+/* ── Headshot ambient caustic. After the one-shot sonar ping, a very faint
+   teal gradient drifts diagonally across the headshot every ~14s — light
+   refracted on a submerged surface. Subtle by design. ── */
+.headshot-ping::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(
+    135deg,
+    transparent 30%,
+    rgb(56 232 198 / 0.18) 48%,
+    rgb(127 219 255 / 0.10) 54%,
+    transparent 72%
+  );
+  background-size: 220% 220%;
+  background-position: 0% 0%;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: headshot-caustic 14s ease-in-out 2.5s infinite;
+  opacity: 0;
+}
+@keyframes headshot-caustic {
+  0%, 100% { background-position: 0% 0%; opacity: 0; }
+  20%      { opacity: 0.55; }
+  50%      { background-position: 100% 100%; opacity: 0.45; }
+  80%      { opacity: 0.3; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .headshot-ping::before { animation: none; opacity: 0; }
 }

@@ -1,6 +1,6 @@
 # Session Handoff — andrespino.com portfolio
 
-**Last updated:** 2026-05-29 session end · **Branch:** `main` @ `61efdec` (pushed) **+ 7 files of UNCOMMITTED design-enhancement work** (see §2d). Read §2d first.
+**Last updated:** 2026-06-25 session end · **Branch:** `main` — **all of §2d + §2e + §2f COMMITTED & PUSHED to prod** (Cloudflare auto-deploy). The working tree is clean except the gitignored tooling leftovers (`.impeccable/`, `PRODUCT.md` — now in `.gitignore`). The "UNCOMMITTED / localhost only" notes in §2d and §2e below are now HISTORICAL — that work shipped in the 2026-06-25 commit. See §2f for the scene overhaul that shipped with it.
 
 ---
 
@@ -77,6 +77,76 @@ Ran a 3-framework design audit (`emil-design-eng` + `design-taste-frontend` + `i
 **Two dev servers were left running this session:** `4321` (desktop) + `4323` (mobile, started via `npx astro dev --port 4323`). Both may be dead by next session — restart as needed. NB: Astro auto-increments the port if one is taken (saw `4322` mid-session), so confirm the actual port from the dev-server output before pointing a browser at it.
 
 **Resume options for next chat:** (a) Andrés reviews the 8 enhancements on localhost → commit + push (one commit, triggers Cloudflare deploy); (b) iterate on any of the 8; (c) build deferred #10/#11; (d) revert all via `git checkout -- src/`.
+
+## 2e. HELIOS directed-energy session (2026-06-23) — ⚠️ UNCOMMITTED, on localhost only
+
+**What Andrés asked for:** review what's been learned, weave directed energy into the theme + animation, **add a HELIOS-style DE system to the surface ship**, prototype on localhost, propose other optimisations, check links, flag issues. Built the HELIOS engagement; the wider audit/optimisation/link-check pass was not completed in this session — see "Still to do."
+
+**Goal of the DE engagement:** the ambient subsea scene already shows sonar (HELRAS, torpedo beam-steering, bottom-UUV survey). It told a sonar story but **nothing said directed-energy.** Andrés's domain split is sonar + autonomy + directed-energy, so the scene was carrying 2 of 3 disciplines. HELIOS on the destroyer closes the gap, and ties chromatically to the `/directed-energy` page accent (`#7fe3ff`).
+
+**Files touched this session:** `src/components/scene/BackgroundScene.astro` (+101/-2), `src/pages/directed-energy.astro` (+9/-7). Plus the 7 files still uncommitted from §2d. All uncommitted.
+
+**HELIOS engagement design (in `BackgroundScene.astro`):**
+- Mounted on the destroyer's forward deckhouse. **Destroyer SVG was switched to `overflow: visible`** so the beam can fire UP past the SVG viewBox into the sky-band coordinate space without clipping, while the engagement group still inherits the ship's drift transform (stays locked to the ship as it transits).
+- New `<g class="bg-de">` group inside the destroyer SVG with five sub-elements:
+  - `.bg-de-target` — small chevron + rocket-body shape, the inbound aerial target (cruise-missile surrogate), starts up-forward of the bow and translates *toward* the ship during the approach phase. Fades out after kill.
+  - `.bg-de-beam.bg-de-beam--bloom` — wide low-opacity `#7fe3ff` line (sw 4.5) from emitter `(372, 30)` → target `(556, -70)`. The diffuse glow.
+  - `.bg-de-beam.bg-de-beam--core` — narrow near-white `#eafdff` line (sw 1.6) on the same path. The hot lasing core.
+  - `.bg-de-flash` — `#eafdff` circle at the target point; scales 0.3 → 2.2 with a `drop-shadow` glow at the kill moment.
+  - Emitter turret (static teal rect) + `.bg-de-aperture` (`#7fe3ff` circle that brightens as the system charges → lases → settles back).
+- **15-second engagement loop**, all sub-elements share the same 15s period so phases stay aligned:
+  - **0–24%** — quiet (aperture at 0.4, target inbound, beam off)
+  - **30%** — aperture peaks, beam fires
+  - **30–45%** — **sustained lase with characteristic flicker** (`de-fire` keyframe steps 1 → 0.55 → 1 → 0.7 → 1 → 0.9 → 0 — the irregular dips read as a real-system thermal/jitter signature, not a generic CSS pulse).
+  - **38%** — kill flash peaks (target burst), target fades.
+  - **45%+** — quiet reset, target reappears at start for the next cycle.
+- **`prefers-reduced-motion`**: engagement frozen mid-lase (beam locked on target, target at terminal position, no flash). Same pattern as the helo's reduced-motion deployed state — shows the design as a static tableau.
+
+**Why these numbers:** beam endpoint `(556, -70)` is the *destroyer SVG-local* coordinate; with `overflow: visible` the beam extends ~70 units above the deck into the sky-band visual area. Emitter at `(372, 30)` sits on the forward deckhouse (just aft of the bow superstructure). Colour `#7fe3ff` is the existing **directed-energy domain accent** already in `ProjectCard.astro`'s `domainAccent` map and `directed-energy.astro`'s headers — **chromatic continuity is intentional** (the scene speaks the same colour as the domain page).
+
+**`/directed-energy` page accent re-color** (in `src/pages/directed-energy.astro`):
+- Swapped **8 instances** of `text-teal` / `border-teal` / `bg-teal` → arbitrary-value `text-[#7fe3ff]` / `border-[#7fe3ff]` / `bg-[#7fe3ff]/...` on this page only (back-link, eyebrow, H2, list bullets, CTA card border + label + link).
+- Other domain pages (`/sonar`, `/auv-uuv`) still use the teal default — they don't have a distinct accent yet. ⚠️ **Open question:** should `/sonar` get its own accent (`#38e8c6` matches teal already, so it's a no-op) and `/auv-uuv` get `#5ab9ea`? `ProjectCard.astro`'s `domainAccent` already maps all three but only the cards consume it; the *page chrome* doesn't.
+- Also added `domain={c.domain}` + `index={i}` props to `ProjectCard` calls so the cards on this page now show the colored domain accent bar (was missing — cards used the default teal accent regardless of domain).
+
+**Verification status this session:** dev server `4322` running; injected style tried to fatten beam for screenshot but the `mcp__playwright__browser_take_screenshot` returned a "[Tool result missing due to internal error]" on the final viewport capture — so **the DE laser has NOT been visually screenshot-confirmed yet**. The geometry is correct on paper; the keyframe values are deterministic. Andrés should pull localhost first thing next session to eyeball it.
+
+**Lessons learned (carry into future scene edits):**
+- **The `surface-deck` pattern works** for cross-element alignment but each child SVG (destroyer / helo) carries its own coordinate system. If a new effect needs to fire OUT of its parent SVG (HELIOS beam into the sky), the parent needs `overflow: visible` AND the child element coordinates need to think in the parent's viewBox terms (e.g., `cy="-70"` to reach above the deck).
+- **Reuse domain accent colours.** `#38e8c6` (sonar/teal), `#7fe3ff` (DE), `#5ab9ea` (autonomy) are already the `ProjectCard` domain palette. New scene elements should pull from this palette so the colour language stays unified across cards, page chrome, and the ambient scene.
+- **Flicker > pulse** for "active" systems. The 1 → 0.55 → 1 → 0.7 → 1 → 0.9 → 0 step pattern reads as a real engagement signature instead of a generic CSS pulse. Worth carrying into future "live system" animations.
+- **Always confirm screenshot rendered before claiming verified.** This session's last screenshot failed silently — the natural-language "verified" answer would have been wrong. The DE laser needs an eyes-on pass.
+
+**Still to do (Andrés explicitly asked, NOT yet done):**
+1. **Eyes-on verify HELIOS** on localhost desktop + mobile. Tune beam coords / flicker timing if the engagement feels off. The destroyer drifts — confirm the beam tracks during drift and doesn't visibly shear at the SVG edge.
+2. **Lessons-learned audit pass.** What we've actually learned: parametrize with CSS vars from the start (saved us on `--dip` mobile override), source-order matters for equal-specificity media queries, share coordinate frames for cross-element alignment, reuse the domain accent palette across surfaces, gate scene motion to active windows, always provide a reduced-motion tableau. These should fold into `PRODUCT.md` or a new `DESIGN.md` so future sessions inherit them.
+3. **Optimisation proposals not yet generated this session.** Andrés asked for "other enhancements that can help optimize the portfolio." Candidates worth surfacing: image preload audit (the headshot AVIF is already preloaded, but no `<link rel=preconnect>` for Formspree?), bundle/asset inspection on the `dist/` build, sitemap.xml presence check, audit `_redirects`/canonical URL behaviour, run Lighthouse against the live site for a real perf baseline.
+4. **Link check.** Andrés asked for this and it wasn't run. Quick path: `npx linkinator https://andrespino.com -r --skip "^mailto:"` or equivalent. Walk all internal pages (`/`, `/projects`, `/sonar`, `/auv-uuv`, `/directed-energy`, the 6 homepage project external URLs + the 6 `/projects` external URLs, social/résumé). The Marlin link was already fixed in `d6d1195`; nothing else flagged but unchecked.
+5. **Issues check.** Andrés asked for this and it wasn't run. Open-tab list to walk: console errors on each page (currently 0 reported but only desktop home was checked), broken-image audit, `og-image.png` presence, `andres-pino-resume.pdf` presence + currency, mobile-Safari address-bar `dvh` regression check (a known iOS Safari quirk), keyboard-only navigation pass, screen-reader pass on the new aria-live + form-status copy.
+6. **Decide on `PRODUCT.md` + `.impeccable/`.** Still untracked at repo root from the §2d audit session. Either commit, gitignore, or delete.
+
+## 2f. Scene overhaul session (2026-06-25) — ✅ COMMITTED & PUSHED
+
+Reworked the ambient `BackgroundScene` directed-energy story plus several UI removals, all in this commit. Verified: clean `npm run build` (6 pages, no errors), desktop + mobile (390px, no horizontal overflow), 0 console errors in a clean Playwright browser (the only console "errors" are Chrome-extension noise, `:0:0` "message channel closed").
+
+**Removals (per Andrés):**
+- **Rotating hero** "Currently active on" signal + its scripts — removed from `Hero.astro`.
+- **Depth ladder** (Surface/2000m/…) — removed the depth column from `SideNav.astro` (back to 2-col).
+- **Depth-gauge live readout** — removed the numeric "M" readout from `DepthGauge.astro` (gauge fill/marker kept).
+
+**HELIOS (surface destroyer), `BackgroundScene.astro`:** single 15s engagement → **4 engagements at 4 bearings, two FORWARD + two AFT** (targets x556/610 fwd, x190/135 aft of emitter x373), quarter-phase staggered (`--de-delay` 0/−2.25/−4.5/−6.75s) → a shot ~every 2.25s alternating fore/aft as the ship transits. Aperture 2.25s.
+
+**MQ-9 Reaper airborne laser strafe (new), `BackgroundScene.astro`:** the whole engagement (airframe + pod + laser + UAV + flash) rides one group; the **container flies the full screen width continuously** (`reaper-flyby` 22s, 134vw↔−34vw) and lases the UAV mid-pass (no hold). Runs HIGH in the sky band, vertically clear of the ship. A `<script>` rerolls **direction + altitude each pass** (`--rfly-*` vars; `.bg-reaper-face` mirrors the airframe to face travel). Airframe is a detailed MQ-9 side profile: bulbous SATCOM-hump nose, chin MTS-B ball, dorsal intake scoop, wing + underwing pods, inverted-V ruddervators, pusher prop.
+
+**DE-centric scene variant:** `BackgroundScene` now takes `variant` prop; `directed-energy.astro` passes `sceneVariant="directed-energy"` (threaded via `BaseLayout`). `.scene-de` hides the subsea fleet + seabed + dipping-sonar helo (and skips the HELRAS wave layer) so HELIOS + Reaper lead the DE page.
+
+**Ohio bow sonar fix:** it had NO css (static 0.10 fan, `opacity=0` invisible arcs — "funny looking"). Now a longer pulsing forward fan (svg `overflow:visible`) + 4 outward-marching return arcs, more opaque. New `sub-sonar-pulse` / `sub-arc` keyframes + reduced-motion tableau.
+
+**Every** new animation has a `prefers-reduced-motion` static tableau. Scene animated-node count crept up (~+15) but all transform/opacity, scene deferred until after LCP — CWV unaffected.
+
+**Tooling leftovers** `.impeccable/` + `PRODUCT.md` are now gitignored (local only, not site code) — §2e item 6 resolved.
+
+**Still-open §2e follow-ups NOT done this session:** link check, broader issues audit (og-image/resume PDF presence, mobile-Safari dvh, a11y pass), Lighthouse perf baseline, lessons-learned doc. Carry forward.
 
 ## 3. Work accomplished (earlier session, commit-by-commit)
 
@@ -182,7 +252,7 @@ Ran a 3-framework design audit (`emil-design-eng` + `design-taste-frontend` + `i
 ## 11. How to resume
 
 1. `cd "C:\Users\Andres\My Drive\Documents\Claude\portfolio"` · `git status` · `npm run dev`
-2. ⚠️ Working tree is **NOT clean** — 7 modified files = uncommitted design enhancements (see §2d). Last pushed commit `61efdec`; branch otherwise synced to `origin/main`. Untracked: `PRODUCT.md`, `.impeccable/` (tooling, see §2d).
+2. ⚠️ Working tree is **NOT clean** — 9 modified files across two sessions: 7 from §2d (design enhancements) + 2 from §2e (HELIOS DE engagement + DE-page accent re-color). Last pushed commit `7fa5995` (handoff-only); branch otherwise synced to `origin/main`. Untracked: `PRODUCT.md`, `.impeccable/` (tooling, see §2d).
 3. Default workflow: make changes → review on localhost:4321 → commit/push when Andrés approves (push to `main` = Cloudflare prod deploy, ~1–2 min).
 4. Memory files exist: `user_andres_pino.md` (profile) and `project_portfolio_site.md` (project) — already loaded via auto-memory.
-5. First action next chat: ask Andrés whether to commit/push the §2d enhancements, iterate, or revert.
+5. **First action next chat:** ask Andrés to eyes-on the §2e HELIOS engagement on localhost (it was NOT screenshot-verified due to a tool error). Then decide commit strategy: one combined commit for §2d + §2e, two separate commits, or iterate first. Then knock out the rest of the §2e "Still to do" list (audit, link check, issues check, lessons-learned doc).

@@ -26,18 +26,19 @@ const competencies = [
 <BaseLayout
   title="High-Energy Laser Engineering Advisor"
   description="High-energy laser advisory — Reaper-mounted HEL, Layered Laser Defense, GA-EMS power electronics. Architecture review and program due diligence for HEL hardware."
+  sceneVariant="directed-energy"
 >
   <div class="px-6 py-16 lg:px-16 lg:py-24 xl:px-24 2xl:px-32">
     <a
       href="/"
-      class="group inline-flex items-center gap-2 font-mono text-sm text-teal hover:underline"
+      class="group inline-flex items-center gap-2 font-mono text-sm text-[#7fe3ff] hover:underline"
     >
       <span aria-hidden="true" class="transition-transform group-hover:-translate-x-0.5">←</span>
       Back to home
     </a>
 
     <header class="mt-8 max-w-3xl">
-      <p class="font-mono text-xs uppercase tracking-[0.20em] text-teal">
+      <p class="font-mono text-xs uppercase tracking-[0.20em] text-[#7fe3ff]">
         Domain · Directed Energy
       </p>
       <h1 class="mt-3 text-3xl font-semibold text-near-white sm:text-4xl">
@@ -67,9 +68,11 @@ const competencies = [
                 role={c.role}
                 year={c.year}
                 externalUrl={c.externalUrl}
+                domain={c.domain}
                 body={c.body}
                 tags={c.tags}
                 contactId={i + 1}
+                index={i}
               />
             ))
           }
@@ -78,14 +81,14 @@ const competencies = [
 
       <aside class="space-y-8">
         <div>
-          <h2 class="font-mono text-xs uppercase tracking-[0.20em] text-teal">
+          <h2 class="font-mono text-xs uppercase tracking-[0.20em] text-[#7fe3ff]">
             Capabilities in this domain
           </h2>
           <ul class="mt-3 space-y-2 text-sm text-light-slate">
             {
               competencies.map((c) => (
                 <li class="flex items-start gap-2">
-                  <span aria-hidden="true" class="mt-2 inline-block h-px w-3 flex-none bg-teal/60" />
+                  <span aria-hidden="true" class="mt-2 inline-block h-px w-3 flex-none bg-[#7fe3ff]/60" />
                   <span>{c}</span>
                 </li>
               ))
@@ -93,8 +96,8 @@ const competencies = [
           </ul>
         </div>
 
-        <div class="rounded-md border border-teal/30 bg-deep-navy/40 p-5">
-          <p class="font-mono text-[10px] uppercase tracking-[0.20em] text-teal">
+        <div class="rounded-md border border-[#7fe3ff]/30 bg-deep-navy/40 p-5">
+          <p class="font-mono text-[10px] uppercase tracking-[0.20em] text-[#7fe3ff]">
             Engage
           </p>
           <p class="mt-2 text-sm text-light-slate">
@@ -103,7 +106,7 @@ const competencies = [
           </p>
           <a
             href="/#contact"
-            class="mt-4 inline-flex items-center gap-2 font-mono text-sm text-teal hover:underline"
+            class="mt-4 inline-flex items-center gap-2 font-mono text-sm text-[#7fe3ff] hover:underline"
           >
             Start a conversation
             <span aria-hidden="true">→</span>

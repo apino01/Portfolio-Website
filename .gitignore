@@ -14,3 +14,7 @@ Andres Pino Resume - Sr. Mang.pdf
 # graphify analysis artifacts
 graphify-out/
 **/graphify-out/
+
+# impeccable design-audit tooling artifacts (local only, not site code)
+.impeccable/
+PRODUCT.md

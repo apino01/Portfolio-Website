@@ -18,9 +18,18 @@ interface Props {
    *  Pass on pages that render the Hero so the LCP element starts fetching
    *  before the browser parses the <img> tag. */
   preloadHero?: boolean;
+  /** Ambient scene variant. "directed-energy" drops the subsea fleet so the
+   *  HELIOS + Reaper directed-energy engagements lead (used on /directed-energy). */
+  sceneVariant?: "full" | "directed-energy";
 }
 
-const { title, description, canonical, preloadHero = false } = Astro.props;
+const {
+  title,
+  description,
+  canonical,
+  preloadHero = false,
+  sceneVariant = "full",
+} = Astro.props;
 
 // Resolve the optimized AVIF version of the headshot for preloading.
 // 80px @ 2x density matches the displayed 80x80 avatar in the Hero.
@@ -47,7 +56,7 @@ const heroPreload = preloadHero
   </head>
   <body class="min-h-dvh scene-deferred">
     <CausticLight />
-    <BackgroundScene />
+    <BackgroundScene variant={sceneVariant} />
     <MarineSnow />
     <div class="grain-overlay" aria-hidden="true"></div>
     <DepthGauge />

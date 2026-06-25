@@ -107,10 +107,13 @@ const formspreeEndpoint = "https://formspree.io/f/xjgjzrjz";
         <div class="flex items-center gap-4">
           <button
             type="submit"
-            class="inline-flex items-center gap-2 rounded-md border border-teal/40 bg-teal/10 px-5 py-3 font-mono text-sm text-teal transition-colors hover:bg-teal/20 focus:outline-none focus:ring-2 focus:ring-teal disabled:opacity-60"
+            data-submit-btn
+            class="contact-submit relative inline-flex items-center gap-2 overflow-hidden rounded-md border border-teal/40 bg-teal/10 px-5 py-3 font-mono text-sm text-teal transition-colors hover:bg-teal/20 focus:outline-none focus:ring-2 focus:ring-teal disabled:opacity-60"
           >
-            Send message
-            <span aria-hidden="true">→</span>
+            {/* Sonar pulse — emanates from button center while transmitting */}
+            <span class="contact-submit__pulse" aria-hidden="true"></span>
+            <span data-submit-label class="relative">Send message</span>
+            <span aria-hidden="true" class="relative">→</span>
           </button>
           <p
             data-form-status
@@ -156,17 +159,60 @@ const formspreeEndpoint = "https://formspree.io/f/xjgjzrjz";
   </div>
 </section>
 
+<style>
+  /* Sonar pulse on the submit button while transmitting — a single ring
+     expands from the button center, looping during the send. */
+  .contact-submit__pulse {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    border: 1px solid var(--color-teal, #38e8c6);
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .contact-submit[data-state="sending"] .contact-submit__pulse {
+    animation: contact-pulse 1.1s ease-out infinite;
+  }
+  @keyframes contact-pulse {
+    0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 0.6; }
+    100% { transform: translate(-50%, -50%) scale(14); opacity: 0; }
+  }
+  /* Success: brief settle glow */
+  .contact-submit[data-state="sent"] {
+    border-color: color-mix(in srgb, var(--color-teal, #38e8c6) 70%, transparent);
+    box-shadow: 0 0 16px rgb(56 232 198 / 0.3);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .contact-submit[data-state="sending"] .contact-submit__pulse {
+      animation: none;
+      opacity: 0;
+    }
+    .contact-submit[data-state="sent"] { box-shadow: none; }
+  }
+</style>
+
 <script>
   const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
   const status = document.querySelector<HTMLElement>("[data-form-status]");
 
   if (form && status) {
+    const button = form.querySelector<HTMLButtonElement>("[data-submit-btn]");
+    const label = form.querySelector<HTMLElement>("[data-submit-label]");
+    const defaultLabel = label?.textContent ?? "Send message";
+
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const data = new FormData(form);
-      const button = form.querySelector<HTMLButtonElement>("button[type=submit]");
-      if (button) button.disabled = true;
-      status.textContent = "Sending…";
+      if (button) {
+        button.disabled = true;
+        button.dataset.state = "sending";
+      }
+      if (label) label.textContent = "Pinging…";
+      status.textContent = "Transmitting…";
       status.classList.remove("text-teal", "text-red-400");
 
       try {
@@ -177,16 +223,22 @@ const formspreeEndpoint = "https://formspree.io/f/xjgjzrjz";
         });
         if (response.ok) {
           form.reset();
-          status.textContent = "Message sent. I'll reply within two business days.";
+          if (label) label.textContent = "Contact established";
+          if (button) button.dataset.state = "sent";
+          status.textContent = "Contact established. I'll reply within two business days.";
           status.classList.add("text-teal");
         } else {
           const payload = await response.json().catch(() => null);
-          const detail = payload?.errors?.[0]?.message ?? "Send failed. Email me directly.";
+          const detail = payload?.errors?.[0]?.message ?? "Signal lost — use LinkedIn or try again.";
+          if (label) label.textContent = defaultLabel;
+          if (button) button.dataset.state = "";
           status.textContent = detail;
           status.classList.add("text-red-400");
         }
       } catch {
-        status.textContent = "Network error. Email me directly.";
+        if (label) label.textContent = defaultLabel;
+        if (button) button.dataset.state = "";
+        status.textContent = "Signal lost — use LinkedIn or try again.";
         status.classList.add("text-red-400");
       } finally {
         if (button) button.disabled = false;

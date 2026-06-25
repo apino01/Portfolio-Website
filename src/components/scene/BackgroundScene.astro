@@ -1,5 +1,15 @@
 ---
 import WaterSurface from "./WaterSurface.astro";
+
+interface Props {
+  /** "full" (default) shows the whole subsea fleet. "directed-energy" hides
+   *  the sub/torpedo/AUV/seabed clutter and the dipping-sonar helo so the
+   *  directed-energy engagements (surface HELIOS + airborne Reaper strafe)
+   *  lead the scene on the /directed-energy page. */
+  variant?: "full" | "directed-energy";
+}
+const { variant = "full" } = Astro.props;
+
 // Subsea depth scene v5 — US Navy fleet, populated.
 //
 // Depth bands:
@@ -21,7 +31,10 @@ import WaterSurface from "./WaterSurface.astro";
 ---
 
 <div
-  class="background-scene pointer-events-none absolute inset-0 overflow-hidden"
+  class:list={[
+    "background-scene pointer-events-none absolute inset-0 overflow-hidden",
+    variant === "directed-energy" && "scene-de",
+  ]}
   aria-hidden="true"
 >
   {/* Subtle depth gradient */}
@@ -64,10 +77,12 @@ import WaterSurface from "./WaterSurface.astro";
        destroyer hull rides it; the helicopter cable pierces it. */}
     <WaterSurface />
 
-    {/* Destroyer — rides the surface line (deck-local top) */}
+    {/* Destroyer — rides the surface line (deck-local top). overflow:visible so
+        the HELIOS directed-energy beam can fire UP past the SVG viewBox into
+        the sky while staying synced to the ship's drift transform. */}
     <svg
       class="bg-vessel bg-vessel-ship absolute"
-      style="top: 92px; left: -12%; width: 520px; height: 90px;"
+      style="top: 92px; left: -12%; width: 520px; height: 90px; overflow: visible;"
       viewBox="0 0 600 100"
       preserveAspectRatio="xMidYMid meet"
     >
@@ -84,6 +99,72 @@ import WaterSurface from "./WaterSurface.astro";
       <ellipse cx="588" cy="68" rx="10" ry="3" />
       <ellipse cx="600" cy="62" rx="6" ry="2" />
       <ellipse cx="608" cy="68" rx="5" ry="1.5" />
+    </g>
+
+    {/* ── HELIOS-style directed-energy engagement ──
+        Mounted on the forward deckhouse. Four inbound threats arrive from
+        DIFFERENT bearings — two FORWARD (toward the bow) and two AFT (over the
+        stern) — so the turret slews fore and aft engaging targets all around as
+        the ship transits. Each engagement runs the same 9s keyframes
+        phase-shifted by a quarter (--de-delay), so a shot lands ~every 2.25s,
+        alternating front and back. Beam uses the directed-energy domain accent
+        (#7fe3ff) so the colour ties to the /directed-energy page. */}
+    <g class="bg-de">
+      {/* Emitter turret on the forward deckhouse (shared aperture) */}
+      <rect x="356" y="28" width="18" height="11" rx="2" fill="var(--color-teal, #38e8c6)" opacity="0.55" />
+      <circle class="bg-de-aperture" cx="373" cy="31" r="3" fill="#7fe3ff" />
+
+      {/* Engagement 1 — FORWARD high inbound (cruise-missile surrogate) */}
+      <g class="bg-de-eng bg-de-eng--1">
+        <g class="bg-de-target">
+          <path d="M 556 -152 L 572 -150 L 556 -148 Z" fill="#cfefff" opacity="0.9" />
+          <rect x="546" y="-151" width="11" height="2.8" rx="1" fill="#cfefff" opacity="0.75" />
+        </g>
+        <line class="bg-de-beam bg-de-beam--bloom" x1="372" y1="30" x2="556" y2="-150"
+              stroke="#7fe3ff" stroke-width="5" stroke-linecap="round" />
+        <line class="bg-de-beam bg-de-beam--core" x1="372" y1="30" x2="556" y2="-150"
+              stroke="#eafdff" stroke-width="1.7" stroke-linecap="round" />
+        <circle class="bg-de-flash" cx="556" cy="-150" r="3" fill="#eafdff" />
+      </g>
+
+      {/* Engagement 2 — AFT high diver (over the stern) */}
+      <g class="bg-de-eng bg-de-eng--2">
+        <g class="bg-de-target">
+          <path d="M 190 -152 L 174 -150 L 190 -148 Z" fill="#cfefff" opacity="0.9" />
+          <rect x="191" y="-151" width="11" height="2.8" rx="1" fill="#cfefff" opacity="0.75" />
+        </g>
+        <line class="bg-de-beam bg-de-beam--bloom" x1="372" y1="30" x2="190" y2="-150"
+              stroke="#7fe3ff" stroke-width="5" stroke-linecap="round" />
+        <line class="bg-de-beam bg-de-beam--core" x1="372" y1="30" x2="190" y2="-150"
+              stroke="#eafdff" stroke-width="1.7" stroke-linecap="round" />
+        <circle class="bg-de-flash" cx="190" cy="-150" r="3" fill="#eafdff" />
+      </g>
+
+      {/* Engagement 3 — FORWARD shallow sea-skimmer */}
+      <g class="bg-de-eng bg-de-eng--3">
+        <g class="bg-de-target">
+          <path d="M 610 -80 L 626 -78 L 610 -76 Z" fill="#cfefff" opacity="0.9" />
+          <rect x="600" y="-79" width="11" height="2.8" rx="1" fill="#cfefff" opacity="0.75" />
+        </g>
+        <line class="bg-de-beam bg-de-beam--bloom" x1="372" y1="30" x2="610" y2="-78"
+              stroke="#7fe3ff" stroke-width="5" stroke-linecap="round" />
+        <line class="bg-de-beam bg-de-beam--core" x1="372" y1="30" x2="610" y2="-78"
+              stroke="#eafdff" stroke-width="1.7" stroke-linecap="round" />
+        <circle class="bg-de-flash" cx="610" cy="-78" r="3" fill="#eafdff" />
+      </g>
+
+      {/* Engagement 4 — AFT shallow skimmer (low over the stern) */}
+      <g class="bg-de-eng bg-de-eng--4">
+        <g class="bg-de-target">
+          <path d="M 135 -94 L 119 -92 L 135 -90 Z" fill="#cfefff" opacity="0.9" />
+          <rect x="136" y="-93" width="11" height="2.8" rx="1" fill="#cfefff" opacity="0.75" />
+        </g>
+        <line class="bg-de-beam bg-de-beam--bloom" x1="372" y1="30" x2="135" y2="-92"
+              stroke="#7fe3ff" stroke-width="5" stroke-linecap="round" />
+        <line class="bg-de-beam bg-de-beam--core" x1="372" y1="30" x2="135" y2="-92"
+              stroke="#eafdff" stroke-width="1.7" stroke-linecap="round" />
+        <circle class="bg-de-flash" cx="135" cy="-92" r="3" fill="#eafdff" />
+      </g>
     </g>
   </svg>
 
@@ -188,13 +269,91 @@ import WaterSurface from "./WaterSurface.astro";
   </div>
   {/* ════════ END SURFACE DECK ════════ */}
 
+  {/* ════════ AIRBORNE DIRECTED-ENERGY — MQ-9 REAPER LASER STRAFE ════════
+      An MQ-9B Reaper transits the full width of the upper sky band, chasing a
+      UAV and lasing it on the fly — it never stops; the beam flickers on mid-
+      pass and the UAV is killed while both keep moving. The aircraft, pod,
+      laser, UAV and kill-flash all ride INSIDE one group, so the strafe
+      geometry stays locked while the whole engagement flies across (the
+      container does the travelling). It runs HIGH in the sky band, vertically
+      clear of the surface combatant + HELIOS so the two engagements use
+      different screen space. A script rerolls direction + altitude each pass
+      (.bg-reaper-face flips the airframe to face its travel direction). Laser
+      uses the directed-energy accent (#7fe3ff). */}
+  <svg
+    class="bg-reaper-engagement absolute"
+    style="top: 0; left: 0; width: 400px; height: 230px; overflow: visible;"
+    viewBox="0 0 400 230"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    {/* Direction wrapper — scaleX flips the whole engagement to face travel */}
+    <g class="bg-reaper-face">
+      {/* Chased UAV — ahead of the Reaper along its flight path */}
+      <g class="bg-reaper-uav">
+        <ellipse cx="300" cy="120" rx="7" ry="2.2" fill="#cfefff" opacity="0.85" />
+        <path d="M 294 120 L 287 117 L 290 120 L 287 123 Z" fill="#cfefff" opacity="0.7" />
+        <circle cx="307" cy="120" r="1.3" fill="#cfefff" opacity="0.75" />
+      </g>
+
+      {/* Strafe laser — bloom underlay + hot core, pod → UAV */}
+      <line class="bg-reaper-laser bg-reaper-laser--bloom" x1="165" y1="76" x2="300" y2="120"
+            stroke="#7fe3ff" stroke-width="4" stroke-linecap="round" />
+      <line class="bg-reaper-laser bg-reaper-laser--core" x1="165" y1="76" x2="300" y2="120"
+            stroke="#eafdff" stroke-width="1.4" stroke-linecap="round" />
+
+      {/* Kill flash at the UAV */}
+      <circle class="bg-reaper-flash" cx="300" cy="120" r="3" fill="#eafdff" />
+
+      {/* MQ-9 Reaper airframe (side profile, nose right, level) — detailed for
+          recognisability: humpbacked SATCOM nose fairing, chin MTS-B sensor
+          ball, slender drooped fuselage, long wing with underwing munition +
+          laser pods, down-canted inverted-V ruddervators, rear pusher prop. */}
+      <g class="bg-reaper-air">
+        <g fill="var(--color-teal, #38e8c6)" opacity="0.26">
+          {/* Slender high-fineness fuselage — tail boom (left) to bulbous nose */}
+          <path d="M 92 64 Q 98 61.5 136 60.5 L 178 60.5 Q 191 61.5 197 64 Q 191 66.5 178 67.5 L 136 67.5 Q 98 66.5 92 64 Z" />
+          {/* Bulbous nose radome (rounded front) */}
+          <path d="M 178 60 Q 197 59 198 64 Q 197 69 178 68 Z" />
+          {/* SATCOM 'humpback' — single smooth dome just behind the nose (MQ-9 tell) */}
+          <path d="M 153 61 Q 160 50.5 172 50.5 Q 180 51.5 180 61 Z" />
+          {/* Dorsal engine-intake scoop — small distinct bump mid-rear (TPE331) */}
+          <path d="M 116 61 Q 121 55 130 55.5 L 134 58 L 134 61 Z" />
+          {/* Chin-mounted MTS-B EO/IR sensor turret under the nose */}
+          <rect x="184" y="67" width="7" height="3" rx="1" />
+          <circle cx="187" cy="71" r="4.2" />
+          {/* Long wing at mid-fuselage, shallow dihedral, near edge-on */}
+          <path d="M 104 64 L 146 62 L 188 64 L 188 65.5 L 146 63.5 L 104 65.5 Z" opacity="0.9" />
+          {/* Inboard pylon + munition pod (e.g. Hellfire / GBU) */}
+          <rect x="140" y="67.5" width="2" height="3.5" />
+          <rect x="132" y="70.5" width="13" height="3" rx="1.5" opacity="0.85" />
+          <path d="M 145 72 L 151 72 L 148 73.4 Z" opacity="0.85" />
+          {/* Inverted-V ruddervators splaying down-out (Predator/Reaper signature) */}
+          <path d="M 101 62 L 89 77 L 96 62 Z" />
+          <path d="M 105 62 L 96 78 L 101 61 Z" />
+          {/* Small dorsal fin where the ruddervators meet */}
+          <path d="M 100 61 L 97 55 L 103 61 Z" />
+          {/* Pusher-prop hub at the extreme tail */}
+          <circle cx="85" cy="64" r="2.3" />
+        </g>
+        {/* Pusher propeller disc (reuses the scene's spin animation if present) */}
+        <g class="bg-propeller-spin">
+          <ellipse cx="83" cy="64" rx="1.5" ry="8.5" fill="var(--color-teal, #38e8c6)" opacity="0.5" />
+          <line x1="83" y1="55.5" x2="83" y2="72.5" stroke="#38e8c6" stroke-width="0.8" opacity="0.6" />
+        </g>
+        {/* Outboard underwing laser pod + emitter aperture (charges → lases) */}
+        <rect x="158" y="71.5" width="15" height="5" rx="1.5" fill="var(--color-teal, #38e8c6)" opacity="0.5" />
+        <circle class="bg-reaper-pod" cx="165" cy="76" r="2.4" fill="#7fe3ff" />
+      </g>
+    </g>
+  </svg>
+
   {/* ════════ UPPER PHOTIC BAND ════════ */}
 
   {/* OHIO class (SSGN/SSBN) — largest sub, missile deck. BOW RIGHT, STERN LEFT.
       Drifts RIGHT so the bow leads forward motion; bow sonar pings ahead. */}
   <svg
     class="bg-vessel bg-vessel-ohio absolute"
-    style="top: 22%; left: -10%; width: 690px; height: 112px;"
+    style="top: 22%; left: -10%; width: 690px; height: 112px; overflow: visible;"
     viewBox="0 0 800 130"
     preserveAspectRatio="xMidYMid meet"
   >
@@ -230,15 +389,18 @@ import WaterSurface from "./WaterSurface.astro";
       {/* Bow sonar dome (forward of pressure hull) */}
       <ellipse cx="688" cy="65" rx="4" ry="9" opacity="0.55" />
     </g>
-    {/* Active forward-looking sonar fan beam */}
+    {/* Active forward-looking sonar — long fan beam projecting ahead of the bow
+        dome, gently pulsing. Extends past the viewBox (svg overflow:visible). */}
     <g class="bg-sub-sonar">
-      <path d="M 690 50 L 790 22 L 790 108 L 690 80 Z" fill="var(--color-teal, #38e8c6)" opacity="0.10" />
+      <path d="M 690 56 L 916 18 L 916 112 L 690 74 Z" fill="var(--color-teal, #38e8c6)" opacity="0.16" />
     </g>
-    {/* Sonar return arcs traveling forward from bow */}
-    <g fill="none" stroke="var(--color-teal, #38e8c6)" stroke-width="1.2">
-      <path class="bg-sub-arc bg-sub-arc-1" d="M 708 53 Q 714 65 708 77" opacity="0" />
-      <path class="bg-sub-arc bg-sub-arc-2" d="M 736 44 Q 746 65 736 86" opacity="0" />
-      <path class="bg-sub-arc bg-sub-arc-3" d="M 766 33 Q 780 65 766 97" opacity="0" />
+    {/* Sonar return arcs — staggered expanding wavefronts marching forward from
+        the bow, convex toward the bearing of travel */}
+    <g fill="none" stroke="var(--color-teal, #38e8c6)" stroke-width="1.6" stroke-linecap="round">
+      <path class="bg-sub-arc bg-sub-arc-1" d="M 726 50 Q 736 65 726 80" opacity="0" />
+      <path class="bg-sub-arc bg-sub-arc-2" d="M 774 42 Q 788 65 774 88" opacity="0" />
+      <path class="bg-sub-arc bg-sub-arc-3" d="M 824 34 Q 842 65 824 96" opacity="0" />
+      <path class="bg-sub-arc bg-sub-arc-4" d="M 874 26 Q 896 65 874 104" opacity="0" />
     </g>
   </svg>
 
@@ -595,7 +757,10 @@ import WaterSurface from "./WaterSurface.astro";
     deployed transducer depth (translateY --dip). mix-blend-mode:screen makes
     the teal glow over the dark background while leaving the light body text
     essentially untouched; pointer-events:none keeps it non-interactive. The
-    helo-active-gate keeps it visible only during the on-station ping window. */}
+    helo-active-gate keeps it visible only during the on-station ping window.
+    Hidden on the directed-energy variant (it belongs to the dipping-sonar helo,
+    which that variant drops). */}
+{variant !== "directed-energy" && (
 <div class="helras-wave-layer" aria-hidden="true">
   <svg
     class="helras-wave-svg"
@@ -616,6 +781,7 @@ import WaterSurface from "./WaterSurface.astro";
     </g>
   </svg>
 </div>
+)}
 
 <style>
   :global(body) {
@@ -627,6 +793,26 @@ import WaterSurface from "./WaterSurface.astro";
     /* Dim the entire scene so vessels read as ATMOSPHERE not foreground.
        Brightens slightly when user actively engages (no animation cost). */
     opacity: 0.55;
+  }
+
+  /* ─── Directed-energy variant ───
+     Drop the subsea fleet + seabed + dipping-sonar helo so the directed-energy
+     engagements (surface HELIOS + airborne Reaper strafe) carry the scene on
+     the /directed-energy page. The destroyer (HELIOS host), Reaper, water
+     surface, caustics and depth gradient stay. */
+  .scene-de .bg-vessel-ohio,
+  .scene-de .bg-vessel-torpedo-lw,
+  .scene-de .bg-vessel-virginia,
+  .scene-de .bg-vessel-torpedo-hw,
+  .scene-de .bg-vessel-la,
+  .scene-de .bg-vessel-marlin,
+  .scene-de .bg-vessel-xluuv,
+  .scene-de .bg-vessel-mduuv,
+  .scene-de .bg-vessel-manta,
+  .scene-de .bg-vessel-sonar-uuv,
+  .scene-de .bg-vessel-seabed,
+  .scene-de .bg-vessel-helo {
+    display: none;
   }
 
   /* ─── Surface deck — shared coordinate frame for waterline + ship + helo.
@@ -658,10 +844,10 @@ import WaterSurface from "./WaterSurface.astro";
     left: 0;
     right: 0;
     height: 400px;
-    z-index: 11; /* just above main (z-10) */
+    z-index: 8; /* below main content so pings cannot wash over body copy */
     pointer-events: none;
     mix-blend-mode: screen;
-    opacity: 0.9;
+    opacity: 0.72;
   }
   .helras-wave-svg {
     position: absolute;
@@ -736,6 +922,32 @@ import WaterSurface from "./WaterSurface.astro";
     100% { opacity: 0; }
   }
 
+  /* ─── Ohio bow sonar — long forward fan that gently pulses, plus return arcs
+     that march outward from the bow (slower, stately cadence to suit the big
+     boat). More opaque than the old static cone. ─── */
+  .bg-sub-sonar {
+    transform-box: fill-box;
+    transform-origin: left center;
+    animation: sub-sonar-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes sub-sonar-pulse {
+    0%, 100% { opacity: 0.13; }
+    50%      { opacity: 0.24; }
+  }
+  /* Return arcs — staggered fade reads as wavefronts travelling forward */
+  .bg-sub-arc {
+    animation: sub-arc 2.4s ease-out infinite;
+  }
+  .bg-sub-arc-1 { animation-delay: 0s; }
+  .bg-sub-arc-2 { animation-delay: 0.45s; }
+  .bg-sub-arc-3 { animation-delay: 0.9s; }
+  .bg-sub-arc-4 { animation-delay: 1.35s; }
+  @keyframes sub-arc {
+    0%   { opacity: 0; }
+    25%  { opacity: 0.7; }
+    100% { opacity: 0; }
+  }
+
   /* ─── Torpedo sonar — faster cadence (terminal-attack ping rate) ───
      The forward swath both pulses (ping cadence) AND steers: the beam sweeps
      up/down through angles, pivoting at the nose, to read as an electronically
@@ -754,6 +966,170 @@ import WaterSurface from "./WaterSurface.astro";
   @keyframes torp-beam-steer {
     0%, 100% { rotate: -16deg; }
     50%      { rotate: 16deg; }
+  }
+
+  /* ─── HELIOS directed-energy engagement (surface ship) ───
+     Four threats, four bearings — two forward, two aft. Each engagement shares
+     one 9s set of keyframes (target inbound → aperture charges → beam fires
+     with a sustained-lase flicker → kill flash → quiet reset) and is
+     phase-shifted a quarter of the cycle via --de-delay, so a shot lands
+     ~every 2.25s, alternating front and back as the ship transits. Beam glows
+     via a wide low-opacity bloom line under a hot near-white core. */
+  .bg-de-eng--1 { --de-delay: 0s; }
+  .bg-de-eng--2 { --de-delay: -2.25s; }
+  .bg-de-eng--3 { --de-delay: -4.5s; }
+  .bg-de-eng--4 { --de-delay: -6.75s; }
+
+  .bg-de-beam {
+    opacity: 0;
+    filter:
+      drop-shadow(0 0 4px rgb(127 227 255 / 0.95))
+      drop-shadow(0 0 10px rgb(127 227 255 / 0.45));
+    animation: de-fire 9s linear infinite;
+    animation-delay: var(--de-delay, 0s);
+  }
+  .bg-de-beam--bloom { opacity: 0; }
+  @keyframes de-fire {
+    0%, 29%  { opacity: 0; }
+    30%      { opacity: 0.7; }
+    31%      { opacity: 0.35; }
+    32.5%    { opacity: 0.72; }
+    36%      { opacity: 0.45; }
+    38%      { opacity: 0.7; }
+    43%      { opacity: 0.55; }
+    45%      { opacity: 0; }
+    100%     { opacity: 0; }
+  }
+
+  .bg-de-target {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+    animation: de-target 9s ease-in infinite;
+    animation-delay: var(--de-delay, 0s);
+  }
+  @keyframes de-target {
+    0%   { opacity: 0; transform: translate(70px, -30px); }
+    8%   { opacity: 0.7; }
+    29%  { opacity: 0.8; transform: translate(0, 0); }
+    44%  { opacity: 0.9; transform: translate(0, 0); }
+    46%  { opacity: 0; transform: translate(2px, 6px); }
+    100% { opacity: 0; transform: translate(70px, -30px); }
+  }
+
+  .bg-de-flash {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+    filter: drop-shadow(0 0 6px rgb(234 253 255 / 0.9));
+    animation: de-flash 9s ease-out infinite;
+    animation-delay: var(--de-delay, 0s);
+  }
+  @keyframes de-flash {
+    0%, 31% { opacity: 0; transform: scale(0.3); }
+    38%     { opacity: 0.95; transform: scale(1.1); }
+    46%     { opacity: 0; transform: scale(2.2); }
+    100%    { opacity: 0; transform: scale(0.3); }
+  }
+
+  /* Shared aperture pulses once per ~2.25s shot (independent of the 9s
+     per-engagement period) so the turret reads as charging before each lase. */
+  .bg-de-aperture {
+    filter: drop-shadow(0 0 3px rgb(127 227 255 / 0.8));
+    animation: de-aperture 2.25s ease-in-out infinite;
+  }
+  @keyframes de-aperture {
+    0%   { opacity: 0.4; }
+    28%  { opacity: 1; }
+    45%  { opacity: 0.6; }
+    100% { opacity: 0.4; }
+  }
+
+  /* ─── MQ-9 Reaper airborne laser strafe ───
+     22s loop: the whole engagement (airframe + pod + laser + UAV + flash) rides
+     one group and the CONTAINER flies it across the full width of the upper sky
+     band — continuous motion, never stopping. The laser flickers on mid-pass
+     (~42–56%) and the UAV is killed while both keep moving; the strafe geometry
+     stays locked because everything travels together. Flight direction +
+     altitude are CSS vars a script rerolls each pass (defaults below keep it
+     flying with no JS / before hydration). */
+  .bg-reaper-engagement {
+    --rfly-x0: -34vw;
+    --rfly-y0: 4px;
+    --rfly-x1: 134vw;
+    --rfly-y1: 30px;
+    will-change: transform;
+    animation: reaper-flyby 22s linear infinite;
+  }
+  @keyframes reaper-flyby {
+    0%   { transform: translate3d(var(--rfly-x0), var(--rfly-y0), 0); opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { transform: translate3d(var(--rfly-x1), var(--rfly-y1), 0); opacity: 0; }
+  }
+
+  /* scaleX flips the airframe to face its travel direction (set by the script) */
+  .bg-reaper-face {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scaleX(var(--rfly-face, 1));
+  }
+
+  .bg-reaper-laser {
+    opacity: 0;
+    filter:
+      drop-shadow(0 0 4px rgb(127 227 255 / 0.95))
+      drop-shadow(0 0 9px rgb(127 227 255 / 0.45));
+    animation: reaper-laser 22s linear infinite;
+  }
+  .bg-reaper-laser--bloom { opacity: 0; }
+  @keyframes reaper-laser {
+    0%, 41% { opacity: 0; }
+    42%     { opacity: 0.7; }
+    44%     { opacity: 0.4; }
+    46%     { opacity: 0.75; }
+    49%     { opacity: 0.45; }
+    52%     { opacity: 0.7; }
+    56%     { opacity: 0; }
+    100%    { opacity: 0; }
+  }
+
+  .bg-reaper-uav {
+    opacity: 0;
+    animation: reaper-uav 22s ease-out infinite;
+  }
+  @keyframes reaper-uav {
+    0%, 12% { opacity: 0; }
+    18%     { opacity: 0.85; }
+    52%     { opacity: 0.9; }
+    55%     { opacity: 0; }
+    100%    { opacity: 0; }
+  }
+
+  .bg-reaper-flash {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+    filter: drop-shadow(0 0 6px rgb(234 253 255 / 0.9));
+    animation: reaper-flash 22s ease-out infinite;
+  }
+  @keyframes reaper-flash {
+    0%, 52% { opacity: 0; transform: scale(0.3); }
+    55%     { opacity: 0.95; transform: scale(1.1); }
+    60%     { opacity: 0; transform: scale(2.2); }
+    100%    { opacity: 0; transform: scale(0.3); }
+  }
+
+  .bg-reaper-pod {
+    filter: drop-shadow(0 0 3px rgb(127 227 255 / 0.8));
+    animation: reaper-pod 22s ease-in-out infinite;
+  }
+  @keyframes reaper-pod {
+    0%, 36% { opacity: 0.4; }
+    42%     { opacity: 1; }
+    56%     { opacity: 0.6; }
+    62%     { opacity: 0.4; }
+    100%    { opacity: 0.4; }
   }
 
   .bg-torp-arc {
@@ -961,6 +1337,8 @@ import WaterSurface from "./WaterSurface.astro";
     /* Pings frozen mid-cycle for visual interest */
     .bg-sonar-beam        { opacity: 0.85; animation: none; }
     .bg-sonar-arc         { opacity: 0.45; animation: none; }
+    .bg-sub-sonar         { opacity: 0.22; animation: none; }
+    .bg-sub-arc           { opacity: 0.5; animation: none; }
     .bg-torp-sonar        { opacity: 0.85; animation: none; }
     .bg-torp-arc          { opacity: 0.55; animation: none; }
     /* Helicopter parked on-station with sonar fully deployed for visual interest */
@@ -976,6 +1354,18 @@ import WaterSurface from "./WaterSurface.astro";
     .bg-ping-out-3        { opacity: 0.2; transform: translateY(75px) scale(8); }
     .bg-echo-in           { animation: none; opacity: 0; }
     .bg-echo-in-1         { opacity: 0.35; transform: translateY(50px) scale(5); }
+    /* HELIOS engagements frozen mid-lase: beams locked on the inbound targets */
+    .bg-de-beam           { animation: none; opacity: 0.9; }
+    .bg-de-target         { animation: none; opacity: 0.8; transform: translate(0, 0); }
+    .bg-de-flash          { animation: none; opacity: 0; }
+    .bg-de-aperture       { animation: none; opacity: 1; }
+    /* Reaper frozen mid-strafe over the screen: engagement parked mid-pass,
+       laser locked on the UAV */
+    .bg-reaper-engagement { animation: none; opacity: 1; transform: translate3d(42vw, 12px, 0); }
+    .bg-reaper-laser      { animation: none; opacity: 0.85; }
+    .bg-reaper-uav        { animation: none; opacity: 0.85; }
+    .bg-reaper-flash      { animation: none; opacity: 0; }
+    .bg-reaper-pod        { animation: none; opacity: 1; }
   }
 
   /* ─── Mobile: drop the dipping sonar ~25% deeper (300px → 375px) and place
@@ -1002,3 +1392,44 @@ import WaterSurface from "./WaterSurface.astro";
     }
   }
 </style>
+
+<script>
+  // Vary the Reaper's flight each pass: direction (L→R or R→L) and altitude /
+  // slope. The flyby keyframes read --rfly-x0/x1/y0/y1 on the container and
+  // --rfly-face on the airframe wrapper. We reroll on every animation iteration
+  // (while the drone is off-frame at opacity 0), so it crosses the upper band at
+  // a different height / from a different side each time. The container does the
+  // travelling — the airframe + laser + UAV ride along, so the strafe stays
+  // locked while everything keeps moving.
+  const reaper = document.querySelector<SVGElement>(".bg-reaper-engagement");
+  const face = document.querySelector<SVGGElement>(".bg-reaper-face");
+  if (reaper && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const OFF_L = "-34vw";
+    const OFF_R = "134vw";
+    const alts = [2, 16, 30, 46, 60]; // entry/exit altitude options (px from top)
+    const pick = (len: number, not: number) => {
+      let i = not;
+      while (i === not && len > 1) i = Math.floor(Math.random() * len);
+      return i;
+    };
+    let lastDir = -1;
+    let lastY = -1;
+    const reroll = () => {
+      const dir = pick(2, lastDir); // 0 = L→R, 1 = R→L
+      lastDir = dir;
+      const y0i = pick(alts.length, lastY);
+      lastY = y0i;
+      const y1i = pick(alts.length, y0i);
+      reaper.style.setProperty("--rfly-x0", dir === 0 ? OFF_L : OFF_R);
+      reaper.style.setProperty("--rfly-x1", dir === 0 ? OFF_R : OFF_L);
+      reaper.style.setProperty("--rfly-y0", `${alts[y0i]}px`);
+      reaper.style.setProperty("--rfly-y1", `${alts[y1i]}px`);
+      // Face travel direction: airframe drawn nose-right, so mirror for R→L.
+      face?.style.setProperty("--rfly-face", dir === 0 ? "1" : "-1");
+    };
+    reroll();
+    reaper.addEventListener("animationiteration", (e) => {
+      if ((e as AnimationEvent).animationName === "reaper-flyby") reroll();
+    });
+  }
+</script>

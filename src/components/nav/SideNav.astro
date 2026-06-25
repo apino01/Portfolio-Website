@@ -17,13 +17,13 @@ const { items } = Astro.props;
           <a
             href={`#${item.id}`}
             data-section-link={item.id}
-            class="group flex items-center gap-4 py-1 font-mono text-xs uppercase tracking-widest text-slate transition-colors hover:text-near-white focus-visible:text-near-white"
+            class="group grid grid-cols-[2.25rem_minmax(0,1fr)] items-center gap-4 py-1.5 font-mono text-xs uppercase tracking-widest text-slate transition-colors hover:text-near-white focus-visible:text-near-white"
           >
             <span
               data-section-rule
-              class="h-px w-8 bg-slate/40 transition-all group-hover:w-16 group-hover:bg-near-white"
+              class="h-px w-8 justify-self-end bg-slate/40 transition-all duration-300 group-hover:w-12 group-hover:bg-near-white"
             />
-            <span data-section-label>{item.label}</span>
+            <span data-section-label class="truncate">{item.label}</span>
           </a>
         </li>
       ))
@@ -48,11 +48,11 @@ const { items } = Astro.props;
         const label = link.querySelector<HTMLElement>("[data-section-label]");
         if (isActive) {
           link.setAttribute("aria-current", "true");
-          rule?.classList.add("!w-16", "!bg-teal");
+          rule?.classList.add("!w-12", "!bg-teal");
           label?.classList.add("!text-teal");
         } else {
           link.removeAttribute("aria-current");
-          rule?.classList.remove("!w-16", "!bg-teal");
+          rule?.classList.remove("!w-12", "!bg-teal");
           label?.classList.remove("!text-teal");
         }
       });
