@@ -14,7 +14,10 @@ const {
 } = Astro.props;
 
 const siteName = "Andrés Pino — Engineering";
-const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+// A page whose own title already names Andrés stands alone; everything else
+// gets the site-name suffix for brand context in search results. Keeps the
+// homepage title short enough to survive SERP truncation.
+const fullTitle = title.includes("Andrés Pino") ? title : `${title} · ${siteName}`;
 const canonicalURL = canonical
   ? new URL(canonical, Astro.site).toString()
   : new URL(Astro.url.pathname, Astro.site).toString();

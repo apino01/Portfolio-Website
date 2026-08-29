@@ -10,6 +10,7 @@ const navItems = [
   { id: "about", label: "About" },
   { id: "experience", label: "Experience" },
   { id: "projects", label: "Projects" },
+  { id: "services", label: "Services", href: "/services/" },
   { id: "contact", label: "Contact" },
 ];
 ---
@@ -39,16 +40,18 @@ const navItems = [
           Andrés Pino
         </h1>
         <p class="mt-1 max-w-full text-base leading-snug text-light-slate">
-          Senior Electrical &amp; Systems Engineering Leader
+          Engineering Advisor — Defense &amp; Maritime Hardware
         </p>
       </div>
     </div>
 
+    {/* Offer-first positioning: what the visitor gets, then the credibility
+        that backs it. Job-title framing lives in About and Experience. */}
     <p class="max-w-md leading-relaxed text-slate">
-      I am a senior electrical and systems engineering leader with 20 years of
-      experience guiding teams through the full development lifecycle of complex
-      maritime and defense systems — from concept and architecture through
-      integration, test, manufacturing, and delivery.
+      I help defense and maritime teams get hard hardware right — system
+      architecture, power electronics, sonar, and undersea autonomy. Twenty
+      years carrying programs from concept through integration, test, and
+      fleet delivery, now advising teams that need that judgment on demand.
     </p>
 
     {/* Single-line trust anchor — buyer-facing authority signal */}
@@ -62,14 +65,24 @@ const navItems = [
       Active TS Clearance · San Diego, CA
     </p>
 
-    {/* Primary CTA — convert visitors who arrived through a referral */}
-    <a
-      href="#contact"
-      class="hero-cta group inline-flex min-h-[44px] w-fit items-center gap-2 rounded-md border border-teal/40 bg-teal/10 px-4 py-2 font-mono text-sm text-teal transition-colors hover:bg-teal/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal"
-    >
-      Send a note
-      <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">↓</span>
-    </a>
+    {/* CTA pair — primary routes to the offer (what engagements look like),
+        secondary goes straight to contact for visitors who already know. */}
+    <div class="hero-cta flex flex-wrap items-center gap-3">
+      <a
+        href="/services/"
+        class="group inline-flex min-h-[44px] w-fit items-center gap-2 rounded-md border border-teal/50 bg-teal/15 px-4 py-2 font-mono text-sm text-teal transition-colors hover:bg-teal/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+      >
+        How I can help
+        <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+      </a>
+      <a
+        href="#contact"
+        class="group inline-flex min-h-[44px] w-fit items-center gap-2 rounded-md border border-slate/30 px-4 py-2 font-mono text-sm text-light-slate transition-colors hover:border-teal/40 hover:text-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+      >
+        Send a note
+        <span aria-hidden="true" class="transition-transform group-hover:translate-y-0.5">↓</span>
+      </a>
+    </div>
   </div>
 
   <SideNav items={navItems} />
@@ -81,7 +94,7 @@ const navItems = [
         navItems.map((item) => (
           <li>
             <a
-              href={`#${item.id}`}
+              href={item.href ?? `#${item.id}`}
               class="inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-slate/20 px-4 py-2 font-mono text-xs uppercase tracking-widest text-slate hover:border-teal/40 hover:text-teal sm:w-auto"
             >
               {item.label}
@@ -92,7 +105,19 @@ const navItems = [
     </ul>
   </nav>
 
-  <ul class="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Social and resume">
+  <ul class="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Documents and social">
+    <li>
+      {/* Buyer-facing leave-behind — the standard artifact in defense
+          contracting; sits ahead of the résumé for that reason. */}
+      <a
+        href="/andres-pino-capability-statement.pdf"
+        class="group inline-flex min-h-[44px] items-center gap-1.5 font-mono text-xs uppercase tracking-[0.18em] text-light-slate hover:text-teal"
+      >
+        <DocumentIcon />
+        <span>Capability Statement</span>
+        <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">↗</span>
+      </a>
+    </li>
     <li>
       <a
         href="/andres-pino-resume.pdf"

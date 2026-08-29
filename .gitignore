@@ -18,3 +18,6 @@ graphify-out/
 # impeccable design-audit tooling artifacts (local only, not site code)
 .impeccable/
 PRODUCT.md
+
+# Local preview/launch config (machine-specific)
+.claude/

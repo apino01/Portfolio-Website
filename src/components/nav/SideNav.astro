@@ -2,6 +2,9 @@
 interface NavItem {
   id: string;
   label: string;
+  /** Set for links to another page. Anchor items omit this and get
+   *  scroll-spy highlighting; page links are excluded from the observer. */
+  href?: string;
 }
 interface Props {
   items: NavItem[];
@@ -15,8 +18,8 @@ const { items } = Astro.props;
       items.map((item) => (
         <li>
           <a
-            href={`#${item.id}`}
-            data-section-link={item.id}
+            href={item.href ?? `#${item.id}`}
+            data-section-link={item.href ? undefined : item.id}
             class="group grid grid-cols-[2.25rem_minmax(0,1fr)] items-center gap-4 py-1.5 font-mono text-xs uppercase tracking-widest text-slate transition-colors hover:text-near-white focus-visible:text-near-white"
           >
             <span
