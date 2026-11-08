@@ -9,7 +9,9 @@ interface Props {
 const {
   title,
   description,
-  ogImage = "/og-image.png",
+  // Versioned filename: LinkedIn/X cache share images per URL, so a new
+  // image needs a new path. Bump the suffix whenever the image changes.
+  ogImage = "/og-image-2026-11.png",
   canonical,
 } = Astro.props;
 
@@ -47,7 +49,7 @@ const structuredData = {
         url: "https://www.anduril.com/",
       },
       url: siteUrl,
-      image: new URL("/og-image.png", Astro.site).toString(),
+      image: ogImageURL,
       address: {
         "@type": "PostalAddress",
         addressLocality: "San Diego",

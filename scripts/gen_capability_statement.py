@@ -4,10 +4,17 @@ Run from the repo root:  python scripts/gen_capability_statement.py
 Requires: pip install reportlab
 
 Content is drawn only from facts already published on andrespino.com.
-Registration identifiers (UEI/CAGE, business type) stay explicit TBD
-placeholders until real values exist; never invent them. Never characterize
-the classification status of any program.
+Registration identifiers (UEI/CAGE, business type) are set in the constants
+below and their rows are omitted while empty; never invent them. Never
+characterize the classification status of any program.
 """
+
+# Fill from SAM.gov once the entity registration is active (UEI is issued at
+# registration; CAGE follows DLA validation). Example business type:
+# "California LLC (single-member) · Small Business".
+UEI = ""
+CAGE = ""
+BUSINESS_TYPE = ""
 
 from pathlib import Path
 
@@ -180,9 +187,12 @@ def right_column():
         ("CLEARANCE", "Active Top Secret"),
         ("LOCATION", "San Diego, California"),
         ("NAICS (PROPOSED)", "541330 Engineering Services · 541715 R&amp;D in Physical, Engineering &amp; Life Sciences · 541690 Other Scientific &amp; Technical Consulting"),
-        ("UEI / CAGE", "&lt;TBD — add once SAM.gov registration completes&gt;"),
-        ("BUSINESS TYPE", "&lt;TBD — e.g. sole proprietor / LLC, small business&gt;"),
     ]
+    # Registration rows print only once real values exist (never placeholders).
+    if UEI or CAGE:
+        rows.append(("UEI / CAGE", " · ".join(v for v in (UEI, CAGE) if v)))
+    if BUSINESS_TYPE:
+        rows.append(("BUSINESS TYPE", BUSINESS_TYPE))
     t = Table([[Paragraph(k, S_DATA_K), Paragraph(v, S_DATA_V)] for k, v in rows],
               colWidths=[RIGHT_W * 0.34, RIGHT_W * 0.66])
     t.setStyle(TableStyle([
