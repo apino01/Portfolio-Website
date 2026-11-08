@@ -42,6 +42,14 @@ const heroPreload = preloadHero
 <html lang="en">
   <head>
     <SEOHead title={title} description={description} canonical={canonical} />
+    {/* Restore the visitor's "pause motion" choice before first paint. */}
+    <script is:inline>
+      try {
+        if (localStorage.getItem("motion") === "paused") {
+          document.documentElement.classList.add("motion-paused");
+        }
+      } catch (e) {}
+    </script>
     {
       heroPreload && (
         <link

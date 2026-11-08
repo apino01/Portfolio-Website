@@ -90,9 +90,23 @@ const year = new Date().getFullYear();
       </nav>
     </div>
 
-    <p class="mt-12 font-mono text-[10px] uppercase tracking-[0.18em] text-slate/85">
-      © {year} Andrés Pino · Views are my own and do not represent Anduril Industries · Built with Astro
-    </p>
+    <div class="mt-12 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+      <p class="font-mono text-[10px] uppercase tracking-[0.18em] text-slate/85">
+        © {year} Andrés Pino · Views are my own and do not represent Anduril Industries · Built with Astro
+      </p>
+      {/* Visitor control over the ambient scene. Pauses every animation in
+          place (not hidden); choice persists via localStorage. */}
+      <button
+        type="button"
+        data-motion-toggle
+        aria-pressed="false"
+        class="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-slate/30 px-4 font-mono text-[10px] uppercase tracking-[0.18em] text-light-slate transition-colors hover:border-teal/50 hover:text-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+      >
+        <span aria-hidden="true" data-motion-icon>❚❚</span>
+        <span data-motion-label>Pause motion</span>
+      </button>
+    </div>
+
   </div>
 </footer>
 
@@ -107,3 +121,26 @@ const year = new Date().getFullYear();
     border-top: 1px solid rgb(56 232 198 / 0.10);
   }
 </style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>("[data-motion-toggle]");
+  const root = document.documentElement;
+  if (btn) {
+    const label = btn.querySelector<HTMLElement>("[data-motion-label]");
+    const icon = btn.querySelector<HTMLElement>("[data-motion-icon]");
+    const sync = () => {
+      const paused = root.classList.contains("motion-paused");
+      btn.setAttribute("aria-pressed", String(paused));
+      if (label) label.textContent = paused ? "Resume motion" : "Pause motion";
+      if (icon) icon.textContent = paused ? "▶" : "❚❚";
+    };
+    btn.addEventListener("click", () => {
+      const paused = root.classList.toggle("motion-paused");
+      try {
+        localStorage.setItem("motion", paused ? "paused" : "running");
+      } catch {}
+      sync();
+    });
+    sync();
+  }
+</script>

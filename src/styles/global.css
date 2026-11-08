@@ -284,3 +284,11 @@ a:active, button:active, [role="button"]:active, summary:active {
 @media (prefers-reduced-motion: reduce) {
   .headshot-ping::before { animation: none; opacity: 0; }
 }
+
+/* Visitor "pause motion" control (footer). Freezes every animation in place
+   rather than hiding it, so the scene stays as a still composition. */
+html.motion-paused *,
+html.motion-paused *::before,
+html.motion-paused *::after {
+  animation-play-state: paused !important;
+}

@@ -550,19 +550,20 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
     viewBox="0 0 420 60"
     preserveAspectRatio="xMidYMid meet"
   >
-    {/* Downward survey sonar — narrow range-faded fan below the hull with
-        acoustic pulses travelling down it (overflow:visible lets it extend
-        below the vehicle's viewBox). */}
+    {/* Forward-looking sonar — long range-faded fan projecting ahead of the
+        bow (the vehicle travels left, nose at x≈14) with acoustic pulses
+        travelling out along it. overflow:visible lets the fan extend well
+        past the vehicle's viewBox. */}
     <defs>
-      <linearGradient id="marlin-fan-fade" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#38e8c6" stop-opacity="0.22" />
+      <linearGradient id="marlin-fan-fade" x1="1" y1="0" x2="0" y2="0">
+        <stop offset="0%" stop-color="#38e8c6" stop-opacity="0.24" />
         <stop offset="100%" stop-color="#38e8c6" stop-opacity="0" />
       </linearGradient>
     </defs>
-    <path class="marlin-fan" d="M 196 50 L 140 175 L 280 175 L 224 50 Z" fill="url(#marlin-fan-fade)" />
+    <path class="marlin-fan" d="M 14 25 L -440 -50 L -440 110 L 14 35 Z" fill="url(#marlin-fan-fade)" />
     <g stroke="#7ff5dc" stroke-width="1.3" stroke-linecap="round">
-      <line class="marlin-pulse marlin-pulse-1" x1="194" y1="54" x2="226" y2="54" />
-      <line class="marlin-pulse marlin-pulse-2" x1="194" y1="54" x2="226" y2="54" />
+      <line class="marlin-pulse marlin-pulse-1" x1="8" y1="23" x2="8" y2="37" />
+      <line class="marlin-pulse marlin-pulse-2" x1="8" y1="23" x2="8" y2="37" />
     </g>
     <g fill="var(--color-teal, #38e8c6)" opacity="0.22">
       <path d="M 14 30 Q 18 12 38 10 L 350 10 Q 380 10 400 30 Q 380 50 350 50 L 38 50 Q 18 48 14 30 Z" />
@@ -851,9 +852,10 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
 
   .background-scene {
     contain: paint;
-    /* Dim the entire scene so vessels read as ATMOSPHERE not foreground.
-       Brightens slightly when user actively engages (no animation cost). */
-    opacity: 0.55;
+    /* Dim the entire scene so vessels read as ATMOSPHERE not foreground —
+       nudged down from 0.55 so the richer sonar imaging doesn't compete
+       with body copy. */
+    opacity: 0.47;
   }
 
   /* ─── Directed-energy variant ───
@@ -908,7 +910,7 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
     z-index: 8; /* below main content so pings cannot wash over body copy */
     pointer-events: none;
     mix-blend-mode: screen;
-    opacity: 0.72;
+    opacity: 0.6;
   }
   .helras-wave-svg {
     position: absolute;
@@ -1007,7 +1009,7 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
     100% { opacity: 0.08; }
   }
 
-  /* Marlin AUV downward survey sonar */
+  /* Marlin AUV forward-looking sonar */
   .marlin-fan { animation: marlin-fan 2.2s ease-in-out infinite; }
   @keyframes marlin-fan {
     0%, 100% { opacity: 0.6; }
@@ -1021,9 +1023,9 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
   }
   .marlin-pulse-2 { animation-delay: 1.1s; }
   @keyframes marlin-pulse {
-    0%   { transform: translateY(0) scaleX(1); opacity: 0; }
+    0%   { transform: translateX(0) scaleY(1); opacity: 0; }
     10%  { opacity: 0.85; }
-    100% { transform: translateY(112px) scaleX(3.6); opacity: 0; }
+    100% { transform: translateX(-420px) scaleY(9); opacity: 0; }
   }
 
   /* ─── Ohio bow sonar — long forward fan that gently pulses, plus return arcs
@@ -1470,7 +1472,7 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
     .uuv-return           { animation: none; opacity: 0.35; }
     .marlin-fan           { animation: none; }
     .marlin-pulse         { animation: none; opacity: 0; }
-    .marlin-pulse-1       { opacity: 0.6; transform: translateY(50px) scaleX(2.2); }
+    .marlin-pulse-1       { opacity: 0.6; transform: translateX(-180px) scaleY(4); }
     /* HELIOS engagements frozen mid-lase: beams locked on the inbound targets */
     .bg-de-beam           { animation: none; opacity: 0.9; }
     .bg-de-target         { animation: none; opacity: 0.8; transform: translate(0, 0); }
