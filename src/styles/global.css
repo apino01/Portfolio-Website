@@ -138,12 +138,18 @@
    fades them in smoothly. */
 .scene-deferred .background-scene,
 .scene-deferred .caustic-light,
-.scene-deferred .marine-snow {
+.scene-deferred .marine-snow,
+body.scene-deferred .helras-wave-layer {
   opacity: 0;
 }
+/* The HELRAS wave layer lives outside .background-scene (so it can sit above
+   content) and is positioned by % of page height — while fonts/content settle
+   it moves, which counted as layout shift. Deferring it with the rest of the
+   scene keeps it invisible until the page is stable. */
 .background-scene,
 .caustic-light,
-.marine-snow {
+.marine-snow,
+.helras-wave-layer {
   transition: opacity 500ms ease-out;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -152,9 +158,13 @@
   .scene-deferred .marine-snow {
     opacity: 1;
   }
+  body.scene-deferred .helras-wave-layer {
+    opacity: 0.6;
+  }
   .background-scene,
   .caustic-light,
-  .marine-snow {
+  .marine-snow,
+  .helras-wave-layer {
     transition: none;
   }
 }
@@ -292,3 +302,30 @@ html.motion-paused *::before,
 html.motion-paused *::after {
   animation-play-state: paused !important;
 }
+
+/* ── Ambient-scene performance ──────────────────────────────────────────
+   Off-screen vehicles: freeze inner animations (descendants only, so the
+   vehicle's own drift continues and it re-enters view). Toggled by the
+   IntersectionObserver in BackgroundScene. */
+.is-offscreen * {
+  animation-play-state: paused !important;
+}
+
+/* Lighter scene for phones (≤640px) and low-power devices (.scene-lite,
+   set in BaseLayout): drop three mid-water vehicles and stop the costliest
+   decorative loops. The surface story, survey UUV, Marlin and HELRAS stay. */
+@media (max-width: 640px) {
+  .bg-vessel-mduuv,
+  .bg-vessel-manta,
+  .bg-vessel-la { display: none !important; }
+  .uuv-return { animation: none !important; opacity: 0.3; }
+  .bg-propeller-spin,
+  .caustic-blob { animation: none !important; }
+}
+html.scene-lite .bg-vessel-mduuv,
+html.scene-lite .bg-vessel-manta,
+html.scene-lite .bg-vessel-la { display: none !important; }
+html.scene-lite .uuv-return { animation: none !important; opacity: 0.3; }
+html.scene-lite .bg-propeller-spin,
+html.scene-lite .caustic-blob { animation: none !important; }
+

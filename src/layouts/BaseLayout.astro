@@ -42,13 +42,17 @@ const heroPreload = preloadHero
 <html lang="en">
   <head>
     <SEOHead title={title} description={description} canonical={canonical} />
-    {/* Restore the visitor's "pause motion" choice before first paint. */}
+    {/* Before first paint: restore the visitor's "pause motion" choice, and
+        flag low-power devices for the lighter ambient scene. */}
     <script is:inline>
       try {
         if (localStorage.getItem("motion") === "paused") {
           document.documentElement.classList.add("motion-paused");
         }
       } catch (e) {}
+      if ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4) {
+        document.documentElement.classList.add("scene-lite");
+      }
     </script>
     {
       heroPreload && (
@@ -89,11 +93,24 @@ const heroPreload = preloadHero
         var reveal = function () {
           document.body.classList.remove("scene-deferred");
         };
-        if ("requestIdleCallback" in window) {
-          requestIdleCallback(reveal, { timeout: 1500 });
-        } else {
-          setTimeout(reveal, 600);
-        }
+        var whenIdle = function () {
+          if ("requestIdleCallback" in window) {
+            requestIdleCallback(reveal, { timeout: 1500 });
+          } else {
+            setTimeout(reveal, 600);
+          }
+        };
+        // Scene layers are positioned by % of page height, so they must not
+        // become visible until web fonts have swapped in and the page height
+        // is final — otherwise the swap reflow moves them (layout shift).
+        // Capped at 3s so a slow font never holds the scene back forever.
+        var fontsReady = document.fonts && document.fonts.ready
+          ? document.fonts.ready
+          : Promise.resolve();
+        Promise.race([
+          fontsReady,
+          new Promise(function (r) { setTimeout(r, 3000); }),
+        ]).then(whenIdle);
       })();
     </script>
   </body>

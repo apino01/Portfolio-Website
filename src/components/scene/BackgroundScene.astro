@@ -1086,9 +1086,6 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
 
   .bg-de-beam {
     opacity: 0;
-    filter:
-      drop-shadow(0 0 4px rgb(127 227 255 / 0.95))
-      drop-shadow(0 0 10px rgb(127 227 255 / 0.45));
     animation: de-fire 9s linear infinite;
     animation-delay: var(--de-delay, 0s);
   }
@@ -1125,7 +1122,6 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
     transform-box: fill-box;
     transform-origin: center;
     opacity: 0;
-    filter: drop-shadow(0 0 6px rgb(234 253 255 / 0.9));
     animation: de-flash 9s ease-out infinite;
     animation-delay: var(--de-delay, 0s);
   }
@@ -1139,7 +1135,6 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
   /* Shared aperture pulses once per ~4.5s shot (independent of the 9s
      per-engagement period) so the turret reads as charging before each lase. */
   .bg-de-aperture {
-    filter: drop-shadow(0 0 3px rgb(127 227 255 / 0.8));
     animation: de-aperture 4.5s ease-in-out infinite;
   }
   @keyframes de-aperture {
@@ -1181,9 +1176,6 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
 
   .bg-reaper-laser {
     opacity: 0;
-    filter:
-      drop-shadow(0 0 4px rgb(127 227 255 / 0.95))
-      drop-shadow(0 0 9px rgb(127 227 255 / 0.45));
     animation: reaper-laser 22s linear infinite;
   }
   .bg-reaper-laser--bloom { opacity: 0; }
@@ -1214,7 +1206,6 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
     transform-box: fill-box;
     transform-origin: center;
     opacity: 0;
-    filter: drop-shadow(0 0 6px rgb(234 253 255 / 0.9));
     animation: reaper-flash 22s ease-out infinite;
   }
   @keyframes reaper-flash {
@@ -1225,7 +1216,6 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
   }
 
   .bg-reaper-pod {
-    filter: drop-shadow(0 0 3px rgb(127 227 255 / 0.8));
     animation: reaper-pod 22s ease-in-out infinite;
   }
   @keyframes reaper-pod {
@@ -1550,5 +1540,25 @@ const beamFingers = [0, 150, 300, 450, 600, 750, 900, 1050, 1200];
     reaper.addEventListener("animationiteration", (e) => {
       if ((e as AnimationEvent).animationName === "reaper-flyby") reroll();
     });
+  }
+</script>
+
+<script>
+  // Performance: pause each vehicle's INNER animations (sonar, beams,
+  // propellers, pings) while it is off-screen. The element's own drift /
+  // flyby keeps running — it is a cheap composited transform — so vehicles
+  // still travel back into view on schedule. rootMargin resumes them just
+  // before they appear.
+  const targets = document.querySelectorAll<Element>(
+    ".background-scene .bg-vessel, .background-scene .bg-reaper-engagement, .helras-wave-layer",
+  );
+  if ("IntersectionObserver" in window && targets.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) e.target.classList.toggle("is-offscreen", !e.isIntersecting);
+      },
+      { rootMargin: "200px 0px" },
+    );
+    targets.forEach((t) => io.observe(t));
   }
 </script>
